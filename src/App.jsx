@@ -1,24 +1,32 @@
-import {useEffect, useState} from 'react'
+import { useState } from 'react'
+import Inmuebles from './components/Inmuebles'
+import Personas from './components/Personas'
+import Arriendos from './components/Arriendos'
+import Honorarios from './components/Honorarios'
+import CuentasPorCobrar from './components/CuentasPorCobrar'
 
 function App() {
-  const [personas, setPersonas] = useState([])
-
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/personas/')
-      .then((response) => response.json())
-      .then((data) => setPersonas(data))
-  }, [])
+  const [seccionActiva, setSeccionActiva] = useState('cuentas')
 
   return (
     <div>
-      <h1>Personas</h1>
-      <ul>
-        {personas.map((persona) => (
-          <li key={persona.id}> {persona.nombre} - {persona.cedula} </li>
-        ))}
-      </ul>
+      <h1>Gestión de Negocio</h1>
+      <nav>
+      <button onClick={() => setSeccionActiva('personas')}>Personas</button>
+      <button onClick={() => setSeccionActiva('inmuebles')}>Inmuebles</button>
+      <button onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
+      <button onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>
+      <button onClick={() => setSeccionActiva('cuentas')}>Cuentas por Cobrar</button>
+      </nav>
+
+      {seccionActiva === 'personas' && <Personas />}
+      {seccionActiva === 'inmuebles' && <Inmuebles />}
+      {seccionActiva === 'arriendos' && <Arriendos />}
+      {seccionActiva === 'honorarios' && <Honorarios />}
+      {seccionActiva === 'cuentas' && <CuentasPorCobrar />}
     </div>
   )
+
 }
 
 export default App
