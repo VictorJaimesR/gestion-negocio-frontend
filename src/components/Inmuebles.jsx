@@ -15,9 +15,9 @@ function Inmuebles() {
             <table>
                 <thead>
                     <tr>
-                        <th>tipo</th>
-                        <th>descripción</th>
-                        <th>estado</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>

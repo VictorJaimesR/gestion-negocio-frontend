@@ -15,6 +15,7 @@ function Personas() {
         <table>
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Cédula</th>
                     <th>Teléfono</th>
@@ -24,6 +25,7 @@ function Personas() {
             <tbody>
                 {personas.map((persona) => (
                     <tr key={persona.id}>
+                        <td>{persona.id}</td>
                         <td>{persona.nombre}</td>
                         <td>{persona.cedula}</td>
                         <td>{persona.telefono}</td>
