@@ -1,91 +1,205 @@
-import { useState, useEffect } from 'react'
+import { Fragment, useState, useEffect, useCallback } from 'react'
+import { AccionesTabla } from './AccionesTabla'
+import { leerRespuesta } from './api'
+import CampoNumero from './CampoNumero'
+import { formatearMoneda, formatearFecha } from './formatters'
+
+function calcularValorCuota(precio, pagoInicial, numeroCuotas) {
+  if (
+    precio === ''
+    || pagoInicial === ''
+    || numeroCuotas === ''
+    || Number(precio) <= 0
+    || Number(pagoInicial) < 0
+    || Number(pagoInicial) > Number(precio)
+    || Number(numeroCuotas) <= 0
+  ) {
+    return ''
+  }
+
+  return ((Number(precio) - Number(pagoInicial)) / Number(numeroCuotas)).toFixed(2)
+}
 
 function Ventas() {
   const [ventas, setVentas] = useState([])
   const [ventaExpandida, setVentaExpandida] = useState(null)
+  const [inmuebles, setInmuebles] = useState([])
+  const [personas, setPersonas] = useState([])
+  const [inmueble, setInmueble] = useState('')
+  const [comprador, setComprador] = useState('')
+  const [fecha_venta, setFechaVenta] = useState('')
+  const [precio_venta, setPrecioVenta] = useState('')
+  const [estado, setEstado] = useState('')
+  const [tipoPago, setTipoPago] = useState('contado')
+  const [pago_inicial, setPagoInicial] = useState('')
+  const [numero_cuotas, setNumeroCuotas] = useState('')
+  const [ventaEditando, setVentaEditando] = useState(null)
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/ventas/')
-      .then((response) => response.json())
-      .then((data) => setVentas(data))
+  const cargarInmuebles = useCallback(() => {
+    fetch('http://127.0.0.1:8000/api/inmuebles/').then((response) => response.json()).then(setInmuebles)
   }, [])
 
-  function alternarExpandir(id) {
-    if (ventaExpandida === id) {
-      setVentaExpandida(null)
-    } else {
-      setVentaExpandida(id)
-    }
+  const cargarPersonas = useCallback(() => {
+    fetch('http://127.0.0.1:8000/api/personas/').then((response) => response.json()).then(setPersonas)
+  }, [])
+
+  const cargarVentas = useCallback(() => {
+    cargarInmuebles()
+    cargarPersonas()
+    fetch('http://127.0.0.1:8000/api/ventas/').then((response) => response.json()).then(setVentas)
+  }, [cargarInmuebles, cargarPersonas])
+
+  useEffect(() => {
+    cargarVentas()
+  }, [cargarVentas])
+
+  function limpiarFormulario() {
+    setInmueble('')
+    setComprador('')
+    setFechaVenta('')
+    setPrecioVenta('')
+    setEstado('')
+    setTipoPago('contado')
+    setPagoInicial('')
+    setNumeroCuotas('')
+    setVentaEditando(null)
   }
 
+  function manejarEnvio(evento) {
+    evento.preventDefault()
+    const precio = Number(precio_venta)
+    const pagoInicial = Number(pago_inicial)
+    const cuotas = Number(numero_cuotas)
+    const valorCuota = Number(calcularValorCuota(precio_venta, pago_inicial, numero_cuotas))
+
+    if (tipoPago === 'financiada' && pagoInicial > precio) {
+      window.alert('El pago inicial no puede ser mayor que el precio de venta.')
+      return
+    }
+
+    if (tipoPago === 'financiada' && pagoInicial + (cuotas * valorCuota) < precio) {
+      window.alert('El pago inicial más el valor de las cuotas debe cubrir el precio de venta.')
+      return
+    }
+
+    const nuevaVenta = {
+      inmueble,
+      comprador,
+      fecha_venta,
+      precio_venta,
+      estado,
+      financiamiento: tipoPago === 'financiada'
+        ? {pago_inicial, numero_cuotas, valor_cuota: valorCuota, fecha_inicio: fecha_venta}
+        : null,
+    }
+    const url = ventaEditando
+      ? `http://127.0.0.1:8000/api/ventas/${ventaEditando}/`
+      : 'http://127.0.0.1:8000/api/ventas/'
+
+    fetch(url, {
+      method: ventaEditando ? 'PUT' : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(nuevaVenta),
+    })
+      .then((response) => leerRespuesta(response, 'No se pudo guardar la venta'))
+      .then(() => {
+        limpiarFormulario()
+        cargarVentas()
+      })
+      .catch((error) => window.alert(error.message))
+  }
+
+  function editarVenta(venta) {
+    setVentaEditando(venta.id)
+    setInmueble(String(venta.inmueble_id))
+    setComprador(String(venta.comprador_id))
+    setFechaVenta(venta.fecha_venta)
+    setPrecioVenta(venta.precio_venta)
+    setEstado(venta.estado)
+    setTipoPago(venta.financiamiento ? 'financiada' : 'contado')
+    setPagoInicial(venta.financiamiento?.pago_inicial || '')
+    setNumeroCuotas(venta.financiamiento?.numero_cuotas || '')
+  }
+
+  function eliminarVenta(venta) {
+    if (!['pagada', 'cancelada'].includes(venta.estado)) {
+      window.alert('Solo se puede eliminar una venta pagada o cancelada.')
+      return
+    }
+    if (!window.confirm('¿Seguro que deseas eliminar esta venta y su información de financiamiento?')) return
+    fetch(`http://127.0.0.1:8000/api/ventas/${venta.id}/`, {method: 'DELETE'})
+      .then((response) => leerRespuesta(response, 'No se pudo eliminar la venta'))
+      .then(() => cargarVentas())
+      .catch((error) => window.alert(error.message))
+  }
+
+  function alternarExpandir(id) {
+    setVentaExpandida(ventaExpandida === id ? null : id)
+  }
+
+  const valorCuota = tipoPago === 'financiada'
+    ? calcularValorCuota(precio_venta, pago_inicial, numero_cuotas)
+    : ''
+
   return (
-    <div>
-      <h2>Ventas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Inmueble</th>
-            <th>Comprador</th>
-            <th>Fecha</th>
-            <th>Precio</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
+    <section className="app-view">
+      <div className="view-heading"><div><p className="eyebrow">Gestión comercial</p><h2>Ventas</h2><p className="view-subtitle">Administra ventas de contado y financiadas.</p></div><span className="view-badge">{ventas.length} ventas</span></div>
+      <form className="entity-form" onSubmit={manejarEnvio}>
+        <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
+          <option value="">Seleccione un inmueble</option>
+          {inmuebles.filter((item) => item.estado === 'disponible' || String(item.id) === inmueble).map((item) => (
+            <option key={item.id} value={item.id}>{item.tipo} - {item.descripcion}</option>
+          ))}
+        </select>
+        <select value={comprador} onChange={(e) => setComprador(e.target.value)} required>
+          <option value="">Seleccione un comprador</option>
+          {personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.nombre} - {persona.cedula}</option>)}
+        </select>
+        <input type="date" value={fecha_venta} onChange={(e) => setFechaVenta(e.target.value)} required />
+        <CampoNumero value={precio_venta} onChange={setPrecioVenta} placeholder="Precio de venta" required />
+        <select value={estado} onChange={(e) => setEstado(e.target.value)} required>
+          <option value="">Seleccione un estado</option>
+          <option value="activa">Activa</option>
+          <option value="pagada">Pagada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+        <select value={tipoPago} onChange={(e) => setTipoPago(e.target.value)} required>
+          <option value="contado">Contado</option>
+          <option value="financiada">Financiada</option>
+        </select>
+        {tipoPago === 'financiada' && (
+          <>
+            <CampoNumero value={pago_inicial} onChange={setPagoInicial} placeholder="Pago inicial" required />
+            <input type="number" min="1" step="1" value={numero_cuotas} onChange={(e) => setNumeroCuotas(e.target.value)} placeholder="Número de cuotas" required />
+            <CampoNumero value={valorCuota} placeholder="Valor de cuota" readOnly required />
+          </>
+        )}
+        <button type="submit">{ventaEditando ? 'Actualizar Venta' : 'Agregar Venta'}</button>
+        {ventaEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
+      </form>
+
+      <div className="table-wrap"><table className="data-table">
+        <thead><tr><th></th><th>Inmueble</th><th>Comprador</th><th>Fecha</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
           {ventas.map((venta) => (
-            <>
-              <tr key={venta.id}>
-                <td>
-                  <button onClick={() => alternarExpandir(venta.id)}>
-                    {ventaExpandida === venta.id ? '−' : '+'}
-                  </button>
-                </td>
-                <td>{venta.inmueble}</td>
-                <td>{venta.comprador}</td>
-                <td>{venta.fecha_venta}</td>
-                <td>{venta.precio_venta}</td>
-                <td>{venta.estado}</td>
+            <Fragment key={venta.id}>
+              <tr>
+                <td><button type="button" onClick={() => alternarExpandir(venta.id)}>{ventaExpandida === venta.id ? '−' : '+'}</button></td>
+                <td>{venta.inmueble}</td><td>{venta.comprador}</td><td>{formatearFecha(venta.fecha_venta)}</td><td>{formatearMoneda(venta.precio_venta)}</td><td><span className={`status status-${venta.estado}`}>{venta.estado}</span></td>
+                <td><AccionesTabla onEditar={() => editarVenta(venta)} onEliminar={() => eliminarVenta(venta)} /></td>
               </tr>
-
               {ventaExpandida === venta.id && venta.financiamiento && (
-                <tr>
-                  <td colSpan="6">
-                    <strong>Financiamiento</strong>
-                    <p>
-                      Pago inicial: {venta.financiamiento.pago_inicial} |
-                      Capital financiado: {venta.financiamiento.capital_financiado} |
-                      {venta.financiamiento.numero_cuotas} cuotas de {venta.financiamiento.valor_cuota}
-                    </p>
-
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Cuota #</th>
-                          <th>Vencimiento</th>
-                          <th>Valor</th>
-                          <th>Estado</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {venta.financiamiento.cuotas.map((cuota) => (
-                          <tr key={cuota.id}>
-                            <td>{cuota.numero_cuota}</td>
-                            <td>{cuota.fecha_vencimiento}</td>
-                            <td>{cuota.valor_cuota}</td>
-                            <td>{cuota.estado}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
+                <tr><td colSpan="7" className="detail-cell"><strong>Financiamiento</strong><p>Pago inicial: {formatearMoneda(venta.financiamiento.pago_inicial)} | Capital financiado: {formatearMoneda(venta.financiamiento.capital_financiado)} | {venta.financiamiento.numero_cuotas} cuotas de {formatearMoneda(venta.financiamiento.valor_cuota)}</p>
+                  <table><thead><tr><th>Cuota #</th><th>Vencimiento</th><th>Valor</th><th>Estado</th></tr></thead><tbody>
+                    {venta.financiamiento.cuotas.map((cuota) => <tr key={cuota.id}><td>{cuota.numero_cuota}</td><td>{formatearFecha(cuota.fecha_vencimiento)}</td><td>{formatearMoneda(cuota.valor_cuota)}</td><td><span className={`status status-${cuota.estado}`}>{cuota.estado}</span></td></tr>)}
+                  </tbody></table>
+                </td></tr>
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
-      </table>
-    </div>
+      </table></div>
+    </section>
   )
 }
 

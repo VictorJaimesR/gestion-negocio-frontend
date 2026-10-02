@@ -89,3 +89,492 @@ table table th {
 button {
   font-family: inherit;
 }
+
+.acciones-tabla {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.acciones-tabla button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #d5dfdf;
+  border-radius: 5px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.acciones-tabla button:hover {
+  background: #f1f6f6;
+}
+
+.acciones-tabla .accion-editar {
+  color: #287c78;
+}
+
+.acciones-tabla .accion-eliminar {
+  color: #a13d3d;
+}
+
+.app-shell {
+  width: 100%;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin: 4px 0 0;
+  color: #17202a;
+  font-size: 2rem;
+}
+
+.app-nav {
+  padding: 6px;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 5px 16px rgba(27, 45, 54, 0.06);
+}
+
+.app-nav button {
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #52616b;
+  font-weight: 700;
+}
+
+.app-nav button:hover,
+.app-nav button.active {
+  background: #287c78;
+  color: #ffffff;
+}
+
+.app-view {
+  color: #17202a;
+}
+
+.view-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 30px 0 22px;
+}
+
+.view-heading h2 {
+  margin: 4px 0 8px;
+  color: #17202a;
+  font-size: 2rem;
+}
+
+.view-subtitle {
+  margin: 0;
+  color: #66727d;
+}
+
+.view-badge {
+  padding: 8px 12px;
+  border: 1px solid #d5dfdf;
+  border-radius: 999px;
+  color: #287c78;
+  background: #f5fbfa;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.entity-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 5px 16px rgba(27, 45, 54, 0.06);
+}
+
+.entity-form input,
+.entity-form select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid #cbd6d8;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #17202a;
+  font: inherit;
+}
+
+.entity-form input:focus,
+.entity-form select:focus {
+  outline: 2px solid #9ed5d0;
+  outline-offset: 1px;
+  border-color: #287c78;
+}
+
+.entity-form input[readonly] {
+  background: #f1f6f6;
+  color: #287c78;
+  font-weight: 700;
+}
+
+.entity-form button {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 5px;
+  background: #287c78;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.entity-form button:hover {
+  background: #1f6663;
+}
+
+.entity-form button[type="button"] {
+  background: #eef2f2;
+  color: #52616b;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.data-table {
+  margin: 0;
+  box-shadow: none;
+}
+
+.data-table td {
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: #f8fbfb;
+}
+
+.detail-cell {
+  background: #f8fbfb;
+}
+
+.detail-cell > table {
+  margin-top: 14px;
+}
+
+.status {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #eef2f2;
+  color: #52616b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.status-activa,
+.status-activo,
+.status-pendiente {
+  background: #e5f4f1;
+  color: #287c78;
+}
+
+.status-pagada,
+.status-finalizado {
+  background: #e7f1e9;
+  color: #357047;
+}
+
+.status-cancelada,
+.status-vencida {
+  background: #f9e8e8;
+  color: #a13d3d;
+}
+
+@media (max-width: 760px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .app-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-nav button {
+    width: 100%;
+  }
+
+  .view-heading {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .entity-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cobros-dashboard {
+  width: 100%;
+  color: #17202a;
+}
+
+.cobros-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.cobros-heading h2 {
+  margin: 4px 0 8px;
+  color: #17202a;
+  font-size: 2rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #287c78;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cobros-subtitle {
+  margin: 0;
+  color: #66727d;
+}
+
+.cobros-periodo {
+  padding: 8px 12px;
+  border: 1px solid #d5dfdf;
+  border-radius: 999px;
+  color: #287c78;
+  background: #f5fbfa;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cobros-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.cobros-card {
+  min-height: 132px;
+  padding: 20px;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 5px 16px rgba(27, 45, 54, 0.06);
+}
+
+.cobros-card-primary {
+  border-color: #287c78;
+  background: #287c78;
+  color: #ffffff;
+}
+
+.cobros-card span,
+.cobros-card small {
+  display: block;
+  color: #71808a;
+}
+
+.cobros-card-primary span,
+.cobros-card-primary small {
+  color: #d8f0ed;
+}
+
+.cobros-card strong {
+  display: block;
+  margin: 12px 0 8px;
+  color: #17202a;
+  font-size: 1.5rem;
+}
+
+.cobros-card-primary strong {
+  color: #ffffff;
+}
+
+.cobros-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #e0e6e7;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: #fbfcfc;
+}
+
+.cobros-toolbar label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #52616b;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.cobros-toolbar input,
+.cobros-toolbar select {
+  min-width: 170px;
+  padding: 9px 10px;
+  border: 1px solid #cbd6d8;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #17202a;
+  font: inherit;
+  font-weight: 400;
+}
+
+.cobros-toolbar input:focus,
+.cobros-toolbar select:focus {
+  outline: 2px solid #9ed5d0;
+  outline-offset: 1px;
+  border-color: #287c78;
+}
+
+.cobros-resultados {
+  margin-left: auto;
+  padding-bottom: 10px;
+  color: #71808a;
+  font-size: 0.85rem;
+}
+
+.cobros-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e0e6e7;
+  border-radius: 0 0 8px 8px;
+  background: #ffffff;
+}
+
+.cobros-people-summary {
+  margin-bottom: 24px;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.cobros-section-heading {
+  padding: 18px 20px 12px;
+}
+
+.cobros-section-heading h3 {
+  margin: 0 0 4px;
+  color: #203b43;
+  font-size: 1.05rem;
+}
+
+.cobros-section-heading p {
+  margin: 0;
+  color: #71808a;
+  font-size: 0.85rem;
+}
+
+.cobros-people-table-wrap {
+  overflow-x: auto;
+}
+
+.cobros-people-table {
+  min-width: 0;
+  border-radius: 0 0 8px 8px;
+  box-shadow: none;
+}
+
+.cobros-table {
+  min-width: 780px;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.cobros-table th {
+  background: #203b43;
+  color: #dce8e8;
+  letter-spacing: 0.04em;
+}
+
+.cobros-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+.cobros-persona {
+  color: #17202a;
+  font-weight: 700;
+}
+
+.cobros-amount {
+  color: #17202a;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cobros-tag,
+.cobros-status {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.cobros-tag-venta { color: #315b8a; background: #eaf2fb; }
+.cobros-tag-arriendo { color: #856321; background: #fff5d8; }
+.cobros-tag-honorario { color: #6f4b86; background: #f4eafb; }
+.cobros-status-pendiente,
+.cobros-status-parcialmente_pagada { color: #856321; background: #fff5d8; }
+.cobros-status-vencida { color: #a13d3d; background: #fdeaea; }
+
+.cobros-empty,
+.cobros-message {
+  padding: 28px;
+  color: #71808a;
+  text-align: center;
+}
+
+.cobros-error {
+  border: 1px solid #edb8b8;
+  border-radius: 6px;
+  color: #a13d3d;
+  background: #fff4f4;
+}
+
+@media (max-width: 800px) {
+  .cobros-heading { flex-direction: column; }
+  .cobros-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cobros-toolbar { align-items: stretch; flex-direction: column; }
+  .cobros-toolbar input, .cobros-toolbar select { width: 100%; }
+  .cobros-resultados { margin-left: 0; padding-bottom: 0; }
+}
+
+@media (max-width: 480px) {
+  .cobros-summary { grid-template-columns: 1fr; }
+  .cobros-heading h2 { font-size: 1.6rem; }
+}

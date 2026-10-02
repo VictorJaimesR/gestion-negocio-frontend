@@ -10,15 +10,15 @@ function App() {
   const [seccionActiva, setSeccionActiva] = useState('cuentas')
 
   return (
-    <div>
-      <h1>Gestión de Negocio</h1>
-      <nav>
-      <button onClick={() => setSeccionActiva('personas')}>Personas</button>
-      <button onClick={() => setSeccionActiva('inmuebles')}>Inmuebles</button>
-      <button onClick={() => setSeccionActiva('ventas')}>Ventas</button>
-      <button onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
-      <button onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>
-      <button onClick={() => setSeccionActiva('cuentas')}>Cuentas por Cobrar</button>
+    <div className="app-shell">
+      <header className="app-header"><div><p className="eyebrow">Panel administrativo</p><h1>Gestión de Negocio</h1></div></header>
+      <nav className="app-nav">
+      <button className={seccionActiva === 'personas' ? 'active' : ''} onClick={() => setSeccionActiva('personas')}>Clientes</button>
+      <button className={seccionActiva === 'inmuebles' ? 'active' : ''} onClick={() => setSeccionActiva('inmuebles')}>Inmuebles</button>
+      <button className={seccionActiva === 'ventas' ? 'active' : ''} onClick={() => setSeccionActiva('ventas')}>Ventas</button>
+      <button className={seccionActiva === 'arriendos' ? 'active' : ''} onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
+      <button className={seccionActiva === 'honorarios' ? 'active' : ''} onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>
+      <button className={seccionActiva === 'cuentas' ? 'active' : ''} onClick={() => setSeccionActiva('cuentas')}>Cuentas por cobrar</button>
       </nav>
 
       {seccionActiva === 'personas' && <Personas />}

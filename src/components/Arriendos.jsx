@@ -1,85 +1,146 @@
-import { useState, useEffect } from 'react'
+import { Fragment, useState, useEffect, useCallback } from 'react'
+import { AccionesTabla } from './AccionesTabla'
+import { leerRespuesta } from './api'
+import CampoNumero from './CampoNumero'
+import { formatearMoneda, formatearFecha } from './formatters'
 
 function Arriendos() {
   const [arriendos, setArriendos] = useState([])
   const [arriendoExpandido, setArriendoExpandido] = useState(null)
+  const [inmuebles, setInmuebles] = useState([])
+  const [personas, setPersonas] = useState([])
+  const [inmueble, setInmueble] = useState('')
+  const [arrendatario, setArrendatario] = useState('')
+  const [canon_mensual, setCanonMensual] = useState('')
+  const [fecha_inicio, setFechaInicio] = useState('')
+  const [fecha_fin, setFechaFin] = useState('')
+  const [dia_pago, setDiaPago] = useState('')
+  const [estado, setEstado] = useState('activo')
+  const [arriendoEditando, setArriendoEditando] = useState(null)
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/arriendos/')
-      .then((response) => response.json())
-      .then((data) => setArriendos(data))
+  const cargarDatos = useCallback(() => {
+    Promise.all([
+      fetch('http://127.0.0.1:8000/api/arriendos/').then((response) => response.json()),
+      fetch('http://127.0.0.1:8000/api/inmuebles/').then((response) => response.json()),
+      fetch('http://127.0.0.1:8000/api/personas/').then((response) => response.json()),
+    ]).then(([arriendosData, inmueblesData, personasData]) => {
+      setArriendos(arriendosData)
+      setInmuebles(inmueblesData)
+      setPersonas(personasData)
+    })
   }, [])
 
-  function alternarExpandir(id) {
-    if (arriendoExpandido === id) {
-      setArriendoExpandido(null)
-    } else {
-      setArriendoExpandido(id)
+  useEffect(() => {
+    cargarDatos()
+  }, [cargarDatos])
+
+  function limpiarFormulario() {
+    setInmueble('')
+    setArrendatario('')
+    setCanonMensual('')
+    setFechaInicio('')
+    setFechaFin('')
+    setDiaPago('')
+    setEstado('activo')
+    setArriendoEditando(null)
+  }
+
+  function manejarEnvio(evento) {
+    evento.preventDefault()
+    const nuevoArriendo = {
+      inmueble,
+      arrendatario,
+      canon_mensual,
+      fecha_inicio,
+      fecha_fin: fecha_fin || null,
+      dia_pago,
+      estado,
     }
+    const url = arriendoEditando
+      ? `http://127.0.0.1:8000/api/arriendos/${arriendoEditando}/`
+      : 'http://127.0.0.1:8000/api/arriendos/'
+
+    fetch(url, {
+      method: arriendoEditando ? 'PUT' : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(nuevoArriendo),
+    })
+      .then((response) => leerRespuesta(response, 'No se pudo guardar el arriendo'))
+      .then(() => {
+        limpiarFormulario()
+        cargarDatos()
+      })
+      .catch((error) => window.alert(error.message))
+  }
+
+  function editarArriendo(arriendo) {
+    setArriendoEditando(arriendo.id)
+    setInmueble(String(arriendo.inmueble_id))
+    setArrendatario(String(arriendo.arrendatario_id))
+    setCanonMensual(arriendo.canon_mensual)
+    setFechaInicio(arriendo.fecha_inicio)
+    setFechaFin(arriendo.fecha_fin || '')
+    setDiaPago(arriendo.dia_pago)
+    setEstado(arriendo.estado)
+  }
+
+  function eliminarArriendo(arriendo) {
+    if (arriendo.estado !== 'finalizado') {
+      window.alert('Solo se puede eliminar un arriendo finalizado.')
+      return
+    }
+    if (!window.confirm('¿Seguro que deseas eliminar este arriendo y sus obligaciones?')) return
+    fetch(`http://127.0.0.1:8000/api/arriendos/${arriendo.id}/`, {method: 'DELETE'})
+      .then((response) => leerRespuesta(response, 'No se pudo eliminar el arriendo'))
+      .then(() => cargarDatos())
+      .catch((error) => window.alert(error.message))
   }
 
   return (
-    <div>
-      <h2>Arriendos</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Inmueble</th>
-            <th>Arrendatario</th>
-            <th>Canon Mensual</th>
-            <th>Día de Pago</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
+    <section className="app-view">
+      <div className="view-heading"><div><p className="eyebrow">Gestión inmobiliaria</p><h2>Arriendos</h2><p className="view-subtitle">Administra contratos, cánones y obligaciones.</p></div><span className="view-badge">{arriendos.length} arriendos</span></div>
+      <form className="entity-form" onSubmit={manejarEnvio}>
+        <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
+          <option value="">Seleccione un inmueble</option>
+          {inmuebles.filter((item) => item.estado === 'disponible' || String(item.id) === inmueble).map((item) => (
+            <option key={item.id} value={item.id}>{item.tipo} - {item.descripcion}</option>
+          ))}
+        </select>
+        <select value={arrendatario} onChange={(e) => setArrendatario(e.target.value)} required>
+          <option value="">Seleccione un arrendatario</option>
+          {personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.nombre} - {persona.cedula}</option>)}
+        </select>
+        <CampoNumero placeholder="Canon mensual" value={canon_mensual} onChange={setCanonMensual} required />
+        <input type="date" value={fecha_inicio} onChange={(e) => setFechaInicio(e.target.value)} required />
+        <input type="date" value={fecha_fin} onChange={(e) => setFechaFin(e.target.value)} />
+        <input type="number" placeholder="Día de pago" min="1" max="31" value={dia_pago} onChange={(e) => setDiaPago(e.target.value)} required />
+        <select value={estado} onChange={(e) => setEstado(e.target.value)} required>
+          <option value="activo">Activo</option><option value="finalizado">Finalizado</option>
+        </select>
+        <button type="submit">{arriendoEditando ? 'Actualizar Arriendo' : 'Agregar Arriendo'}</button>
+        {arriendoEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
+      </form>
+
+      <div className="table-wrap"><table className="data-table">
+        <thead><tr><th></th><th>Inmueble</th><th>Arrendatario</th><th>Canon Mensual</th><th>Día de Pago</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
           {arriendos.map((arriendo) => (
-            <>
-              <tr key={arriendo.id}>
-                <td>
-                  <button onClick={() => alternarExpandir(arriendo.id)}>
-                    {arriendoExpandido === arriendo.id ? '−' : '+'}
-                  </button>
-                </td>
-                <td>{arriendo.inmueble}</td>
-                <td>{arriendo.arrendatario}</td>
-                <td>{arriendo.canon_mensual}</td>
-                <td>{arriendo.dia_pago}</td>
-                <td>{arriendo.estado}</td>
+            <Fragment key={arriendo.id}>
+              <tr>
+                <td><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)}>{arriendoExpandido === arriendo.id ? '−' : '+'}</button></td>
+                <td>{arriendo.inmueble}</td><td>{arriendo.arrendatario}</td><td>{formatearMoneda(arriendo.canon_mensual)}</td><td>{arriendo.dia_pago}</td><td><span className={`status status-${arriendo.estado}`}>{arriendo.estado}</span></td>
+                <td><AccionesTabla onEditar={() => editarArriendo(arriendo)} onEliminar={() => eliminarArriendo(arriendo)} /></td>
               </tr>
-
               {arriendoExpandido === arriendo.id && (
-                <tr>
-                  <td colSpan="6">
-                    <strong>Obligaciones</strong>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Periodo</th>
-                          <th>Vencimiento</th>
-                          <th>Valor</th>
-                          <th>Estado</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {arriendo.obligaciones.map((obligacion) => (
-                          <tr key={obligacion.id}>
-                            <td>{obligacion.periodo}</td>
-                            <td>{obligacion.fecha_vencimiento}</td>
-                            <td>{obligacion.valor_obligacion}</td>
-                            <td>{obligacion.estado}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
+                <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th></tr></thead><tbody>
+                  {arriendo.obligaciones.map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span></td></tr>)}
+                </tbody></table></td></tr>
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
-      </table>
-    </div>
+      </table></div>
+    </section>
   )
 }
 
