@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
-import { leerRespuesta } from './api'
+import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 
@@ -20,9 +20,9 @@ function Arriendos() {
 
   const cargarDatos = useCallback(() => {
     Promise.all([
-      fetch('http://127.0.0.1:8000/api/arriendos/').then((response) => response.json()),
-      fetch('http://127.0.0.1:8000/api/inmuebles/').then((response) => response.json()),
-      fetch('http://127.0.0.1:8000/api/personas/').then((response) => response.json()),
+      apiFetch('/arriendos/').then((response) => leerRespuesta(response, 'No se pudieron cargar los arriendos')),
+      apiFetch('/inmuebles/').then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles')),
+      apiFetch('/personas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las personas')),
     ]).then(([arriendosData, inmueblesData, personasData]) => {
       setArriendos(arriendosData)
       setInmuebles(inmueblesData)
@@ -56,11 +56,7 @@ function Arriendos() {
       dia_pago,
       estado,
     }
-    const url = arriendoEditando
-      ? `http://127.0.0.1:8000/api/arriendos/${arriendoEditando}/`
-      : 'http://127.0.0.1:8000/api/arriendos/'
-
-    fetch(url, {
+    apiFetch(arriendoEditando ? `/arriendos/${arriendoEditando}/` : '/arriendos/', {
       method: arriendoEditando ? 'PUT' : 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(nuevoArriendo),
@@ -90,7 +86,7 @@ function Arriendos() {
       return
     }
     if (!window.confirm('¿Seguro que deseas eliminar este arriendo y sus obligaciones?')) return
-    fetch(`http://127.0.0.1:8000/api/arriendos/${arriendo.id}/`, {method: 'DELETE'})
+    apiFetch(`/arriendos/${arriendo.id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar el arriendo'))
       .then(() => cargarDatos())
       .catch((error) => window.alert(error.message))

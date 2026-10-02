@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiFetch, leerRespuesta } from '../api'
 
 const formatoMoneda = new Intl.NumberFormat('es-CO', {
   maximumFractionDigits: 0,
@@ -94,18 +95,11 @@ function CuentasPorCobrar() {
     const cargarDatos = async () => {
       try {
         const respuestas = await Promise.all([
-          fetch('http://127.0.0.1:8000/api/ventas/'),
-          fetch('http://127.0.0.1:8000/api/arriendos/'),
-          fetch('http://127.0.0.1:8000/api/honorarios/'),
+          apiFetch('/ventas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las ventas')),
+          apiFetch('/arriendos/').then((response) => leerRespuesta(response, 'No se pudieron cargar los arriendos')),
+          apiFetch('/honorarios/').then((response) => leerRespuesta(response, 'No se pudieron cargar los honorarios')),
         ])
-
-        if (respuestas.some((respuesta) => !respuesta.ok)) {
-          throw new Error('No se pudieron cargar las cuentas por cobrar')
-        }
-
-        const [ventas, arriendos, honorarios] = await Promise.all(
-          respuestas.map((respuesta) => respuesta.json()),
-        )
+        const [ventas, arriendos, honorarios] = respuestas
         setCuentas(construirCuentas(ventas, arriendos, honorarios))
       } catch (errorCarga) {
         setError(errorCarga.message)

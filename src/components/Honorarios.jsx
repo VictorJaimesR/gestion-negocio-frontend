@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
-import { leerRespuesta } from './api'
+import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 
@@ -16,15 +16,15 @@ function Honorarios() {
   const [honorarioEditando, setHonorarioEditando] = useState(null)
 
   const cargarPersonas = useCallback(() => {
-    fetch('http://127.0.0.1:8000/api/personas/')
-      .then((response) => response.json())
+    apiFetch('/personas/')
+      .then((response) => leerRespuesta(response, 'No se pudieron cargar las personas'))
       .then((data) => setPersonas(data))
   }, [])
 
   const cargarHonorarios = useCallback(() => {
     cargarPersonas()
-    fetch('http://127.0.0.1:8000/api/honorarios/')
-      .then((response) => response.json())
+    apiFetch('/honorarios/')
+      .then((response) => leerRespuesta(response, 'No se pudieron cargar los honorarios'))
       .then((data) => setHonorarios(data))
   }, [cargarPersonas])
 
@@ -52,11 +52,7 @@ function Honorarios() {
       fecha_vencimiento,
       estado,
     }
-    const url = honorarioEditando
-      ? `http://127.0.0.1:8000/api/honorarios/${honorarioEditando}/`
-      : 'http://127.0.0.1:8000/api/honorarios/'
-
-    fetch(url, {
+    apiFetch(honorarioEditando ? `/honorarios/${honorarioEditando}/` : '/honorarios/', {
       method: honorarioEditando ? 'PUT' : 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(nuevoHonorario),
@@ -81,7 +77,7 @@ function Honorarios() {
 
   function eliminarHonorario(id) {
     if (!window.confirm('¿Seguro que deseas eliminar este honorario?')) return
-    fetch(`http://127.0.0.1:8000/api/honorarios/${id}/`, {method: 'DELETE'})
+    apiFetch(`/honorarios/${id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar el honorario'))
       .then(() => cargarHonorarios())
       .catch((error) => window.alert(error.message))

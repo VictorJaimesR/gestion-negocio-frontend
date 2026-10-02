@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import { AccionesTabla } from './AccionesTabla'
-import { leerRespuesta } from './api'
+import { apiFetch, leerRespuesta } from '../api'
 
 function Personas() {
   const [personas, setPersonas] = useState([])
@@ -18,8 +18,8 @@ function Personas() {
 
 
 function cargarPersonas() {
-    fetch('http://127.0.0.1:8000/api/personas/')
-      .then((response) => response.json())
+    apiFetch('/personas/')
+      .then((response) => leerRespuesta(response, 'No se pudieron cargar las personas'))
       .then((data) => setPersonas(data))
   }
 
@@ -34,11 +34,7 @@ function manejarEnvio(evento) {
         email: email
     }  
     
-    const url = personaEditando
-      ? `http://127.0.0.1:8000/api/personas/${personaEditando}/`
-      : 'http://127.0.0.1:8000/api/personas/'
-
-    fetch(url, {
+    apiFetch(personaEditando ? `/personas/${personaEditando}/` : '/personas/', {
         method: personaEditando ? 'PUT' : 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(nuevaPersona),
@@ -71,7 +67,7 @@ function editarPersona(persona) {
 
 function eliminarPersona(id) {
     if (!window.confirm('¿Seguro que deseas eliminar esta persona?')) return
-    fetch(`http://127.0.0.1:8000/api/personas/${id}/`, {method: 'DELETE'})
+    apiFetch(`/personas/${id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar la persona'))
       .then(() => cargarPersonas())
       .catch((error) => window.alert(error.message))

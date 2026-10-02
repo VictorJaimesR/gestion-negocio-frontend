@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
-import { leerRespuesta } from './api'
+import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 
@@ -36,17 +36,17 @@ function Ventas() {
   const [ventaEditando, setVentaEditando] = useState(null)
 
   const cargarInmuebles = useCallback(() => {
-    fetch('http://127.0.0.1:8000/api/inmuebles/').then((response) => response.json()).then(setInmuebles)
+    apiFetch('/inmuebles/').then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles')).then(setInmuebles)
   }, [])
 
   const cargarPersonas = useCallback(() => {
-    fetch('http://127.0.0.1:8000/api/personas/').then((response) => response.json()).then(setPersonas)
+    apiFetch('/personas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las personas')).then(setPersonas)
   }, [])
 
   const cargarVentas = useCallback(() => {
     cargarInmuebles()
     cargarPersonas()
-    fetch('http://127.0.0.1:8000/api/ventas/').then((response) => response.json()).then(setVentas)
+    apiFetch('/ventas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las ventas')).then(setVentas)
   }, [cargarInmuebles, cargarPersonas])
 
   useEffect(() => {
@@ -92,11 +92,7 @@ function Ventas() {
         ? {pago_inicial, numero_cuotas, valor_cuota: valorCuota, fecha_inicio: fecha_venta}
         : null,
     }
-    const url = ventaEditando
-      ? `http://127.0.0.1:8000/api/ventas/${ventaEditando}/`
-      : 'http://127.0.0.1:8000/api/ventas/'
-
-    fetch(url, {
+    apiFetch(ventaEditando ? `/ventas/${ventaEditando}/` : '/ventas/', {
       method: ventaEditando ? 'PUT' : 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(nuevaVenta),
@@ -127,7 +123,7 @@ function Ventas() {
       return
     }
     if (!window.confirm('¿Seguro que deseas eliminar esta venta y su información de financiamiento?')) return
-    fetch(`http://127.0.0.1:8000/api/ventas/${venta.id}/`, {method: 'DELETE'})
+    apiFetch(`/ventas/${venta.id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar la venta'))
       .then(() => cargarVentas())
       .catch((error) => window.alert(error.message))

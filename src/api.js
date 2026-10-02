@@ -1,3 +1,23 @@
+const BASE_URL = 'http://127.0.0.1:8000/api'
+
+export function apiFetch(ruta, opciones = {}) {
+  const token = localStorage.getItem('token')
+
+  const encabezados = {
+    'Content-Type': 'application/json',
+    ...opciones.headers,
+  }
+
+  if (token) {
+    encabezados['Authorization'] = `Token ${token}`
+  }
+
+  return fetch(`${BASE_URL}${ruta}`, {
+    ...opciones,
+    headers: encabezados,
+  })
+}
+
 export async function leerRespuesta(response, mensaje = 'No se pudo completar la operación') {
   const contentType = response.headers.get('content-type') || ''
   const data = contentType.includes('application/json')
@@ -13,3 +33,5 @@ export async function leerRespuesta(response, mensaje = 'No se pudo completar la
 
   return data
 }
+
+export default apiFetch

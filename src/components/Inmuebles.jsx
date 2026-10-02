@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import { AccionesTabla } from './AccionesTabla';
-import { leerRespuesta } from './api';
+import { apiFetch, leerRespuesta } from '../api';
 
 function Inmuebles() {
     const [inmuebles, setInmuebles] = useState([]);
@@ -14,8 +14,8 @@ function Inmuebles() {
     }, []);
 
     function cargarInmuebles() {
-        fetch('http://127.0.0.1:8000/api/inmuebles/')
-            .then((response) => response.json())
+        apiFetch('/inmuebles/')
+            .then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles'))
             .then((data) => setInmuebles(data));
     }
 
@@ -28,11 +28,7 @@ function Inmuebles() {
             estado: estado
         };
 
-        const url = inmuebleEditando
-            ? `http://127.0.0.1:8000/api/inmuebles/${inmuebleEditando}/`
-            : 'http://127.0.0.1:8000/api/inmuebles/';
-
-        fetch(url, {
+        apiFetch(inmuebleEditando ? `/inmuebles/${inmuebleEditando}/` : '/inmuebles/', {
             method: inmuebleEditando ? 'PUT' : 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(nuevoInmueble),
@@ -63,7 +59,7 @@ function Inmuebles() {
 
     function eliminarInmueble(id) {
         if (!window.confirm('¿Seguro que deseas eliminar este inmueble?')) return;
-        fetch(`http://127.0.0.1:8000/api/inmuebles/${id}/`, {method: 'DELETE'})
+        apiFetch(`/inmuebles/${id}/`, {method: 'DELETE'})
             .then((response) => leerRespuesta(response, 'No se pudo eliminar el inmueble'))
             .then(() => cargarInmuebles())
             .catch((error) => window.alert(error.message));
