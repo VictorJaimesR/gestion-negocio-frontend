@@ -3,6 +3,7 @@ import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
+import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 
 function Arriendos() {
   const [arriendos, setArriendos] = useState([])
@@ -17,6 +18,7 @@ function Arriendos() {
   const [dia_pago, setDiaPago] = useState('')
   const [estado, setEstado] = useState('activo')
   const [arriendoEditando, setArriendoEditando] = useState(null)
+  const [movimientoModal, setMovimientoModal] = useState(null)
 
   const cargarDatos = useCallback(() => {
     Promise.all([
@@ -128,14 +130,15 @@ function Arriendos() {
                 <td><AccionesTabla onEditar={() => editarArriendo(arriendo)} onEliminar={() => eliminarArriendo(arriendo)} /></td>
               </tr>
               {arriendoExpandido === arriendo.id && (
-                <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th></tr></thead><tbody>
-                  {arriendo.obligaciones.map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span></td></tr>)}
+                <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+                  {arriendo.obligaciones.map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(obligacion.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_arriendo', id: obligacion.id, etiqueta: `Periodo ${formatearFecha(obligacion.periodo)} - ${formatearMoneda(obligacion.valor_obligacion)} - Vence ${formatearFecha(obligacion.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
                 </tbody></table></td></tr>
               )}
             </Fragment>
           ))}
         </tbody>
       </table></div>
+      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarDatos} />}
     </section>
   )
 }

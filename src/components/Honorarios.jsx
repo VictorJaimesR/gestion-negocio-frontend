@@ -3,6 +3,7 @@ import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
+import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 
 function Honorarios() {
   const [honorarios, setHonorarios] = useState([])
@@ -14,6 +15,7 @@ function Honorarios() {
   const [fecha_vencimiento, setFechaVencimiento] = useState('')
   const [estado, setEstado] = useState('')
   const [honorarioEditando, setHonorarioEditando] = useState(null)
+  const [movimientoModal, setMovimientoModal] = useState(null)
 
   const cargarPersonas = useCallback(() => {
     apiFetch('/personas/')
@@ -121,11 +123,12 @@ function Honorarios() {
               <td>{formatearMoneda(honorario.valor_honorario)}</td>
               <td>{formatearFecha(honorario.fecha_vencimiento)}</td>
               <td><span className={`status status-${honorario.estado}`}>{honorario.estado}</span></td>
-              <td><AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></td>
+              <td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
             </tr>
           ))}
         </tbody>
       </table></div>
+      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarHonorarios} />}
     </section>
   )
 }

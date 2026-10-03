@@ -210,7 +210,7 @@ function CuentasPorCobrar() {
           <div className="cobros-people-summary">
             <div className="cobros-section-heading">
               <div>
-                <h3>Resumen por persona</h3>
+                <h3>Resumen por cliente</h3>
                 <p>Total acumulado de obligaciones abiertas por deudor.</p>
               </div>
             </div>
@@ -218,7 +218,7 @@ function CuentasPorCobrar() {
               <table className="cobros-table cobros-people-table">
                 <thead>
                   <tr>
-                    <th>Persona</th>
+                    <th>Cliente</th>
                     <th>Obligaciones</th>
                     <th className="cobros-amount">Total adeudado</th>
                   </tr>
@@ -240,7 +240,7 @@ function CuentasPorCobrar() {
             <table className="cobros-table">
               <thead>
                 <tr>
-                  <th>Persona</th>
+                  <th>Cliente</th>
                   <th>Negocio</th>
                   <th>Referencia</th>
                   <th>Vencimiento</th>

@@ -6,6 +6,7 @@ import Arriendos from './components/Arriendos'
 import Honorarios from './components/Honorarios'
 import CuentasPorCobrar from './components/CuentasPorCobrar'
 import Ventas from './components/Ventas'
+import Movimientos from './components/Movimientos'
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null)
@@ -30,6 +31,7 @@ function App() {
       <button className={seccionActiva === 'ventas' ? 'active' : ''} onClick={() => setSeccionActiva('ventas')}>Ventas</button>
       <button className={seccionActiva === 'arriendos' ? 'active' : ''} onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
       <button className={seccionActiva === 'honorarios' ? 'active' : ''} onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>
+      <button className={seccionActiva === 'movimientos' ? 'active' : ''} onClick={() => setSeccionActiva('movimientos')}>Movimientos</button>
       <button type="button" onClick={cerrarSesion}>Cerrar sesión</button>
 
       </nav>
@@ -40,6 +42,7 @@ function App() {
       {seccionActiva === 'arriendos' && <Arriendos />}
       {seccionActiva === 'honorarios' && <Honorarios />}
       {seccionActiva === 'cuentas' && <CuentasPorCobrar />}
+      {seccionActiva === 'movimientos' && <Movimientos />}
     </div>
   )
 

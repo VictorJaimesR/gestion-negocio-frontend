@@ -3,6 +3,7 @@ import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
+import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 
 function calcularValorCuota(precio, pagoInicial, numeroCuotas) {
   if (
@@ -34,6 +35,7 @@ function Ventas() {
   const [pago_inicial, setPagoInicial] = useState('')
   const [numero_cuotas, setNumeroCuotas] = useState('')
   const [ventaEditando, setVentaEditando] = useState(null)
+  const [movimientoModal, setMovimientoModal] = useState(null)
 
   const cargarInmuebles = useCallback(() => {
     apiFetch('/inmuebles/').then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles')).then(setInmuebles)
@@ -186,8 +188,8 @@ function Ventas() {
               </tr>
               {ventaExpandida === venta.id && venta.financiamiento && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Financiamiento</strong><p>Pago inicial: {formatearMoneda(venta.financiamiento.pago_inicial)} | Capital financiado: {formatearMoneda(venta.financiamiento.capital_financiado)} | {venta.financiamiento.numero_cuotas} cuotas de {formatearMoneda(venta.financiamiento.valor_cuota)}</p>
-                  <table><thead><tr><th>Cuota #</th><th>Vencimiento</th><th>Valor</th><th>Estado</th></tr></thead><tbody>
-                    {venta.financiamiento.cuotas.map((cuota) => <tr key={cuota.id}><td>{cuota.numero_cuota}</td><td>{formatearFecha(cuota.fecha_vencimiento)}</td><td>{formatearMoneda(cuota.valor_cuota)}</td><td><span className={`status status-${cuota.estado}`}>{cuota.estado}</span></td></tr>)}
+                  <table><thead><tr><th>Cuota #</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+                    {venta.financiamiento.cuotas.map((cuota) => <tr key={cuota.id}><td>{cuota.numero_cuota}</td><td>{formatearFecha(cuota.fecha_vencimiento)}</td><td>{formatearMoneda(cuota.valor_cuota)}</td><td><span className={`status status-${cuota.estado}`}>{cuota.estado}</span></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(cuota.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_cuota', id: cuota.id, etiqueta: `Cuota #${cuota.numero_cuota} - ${formatearMoneda(cuota.valor_cuota)} - Vence ${formatearFecha(cuota.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
                   </tbody></table>
                 </td></tr>
               )}
@@ -195,6 +197,7 @@ function Ventas() {
           ))}
         </tbody>
       </table></div>
+      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarVentas} />}
     </section>
   )
 }
