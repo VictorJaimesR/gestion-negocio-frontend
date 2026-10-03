@@ -120,6 +120,13 @@ button {
   color: #a13d3d;
 }
 
+.payment-history {
+  margin-top: 6px;
+  color: #52616b;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
 .app-shell {
   width: 100%;
 }
@@ -268,6 +275,77 @@ button {
   margin-bottom: 24px;
 }
 
+.user-menu {
+  position: relative;
+}
+
+.user-menu-trigger {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  place-items: center;
+  border: 1px solid #d5dfdf;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #287c78;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(27, 45, 54, 0.08);
+}
+
+.user-menu-trigger:hover,
+.user-menu-trigger:focus-visible {
+  background: #f1f6f6;
+  outline: 2px solid #9bc8c4;
+  outline-offset: 2px;
+}
+
+.user-menu-trigger svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 5;
+  display: grid;
+  min-width: 170px;
+  padding: 6px;
+  border: 1px solid #e0e6e7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(27, 45, 54, 0.14);
+}
+
+.user-menu-dropdown button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #52616b;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: left;
+}
+
+.user-menu-dropdown button:hover,
+.user-menu-dropdown button:focus-visible {
+  background: #f1f6f6;
+  color: #287c78;
+  outline: none;
+}
+
+.user-menu-dropdown button:last-child {
+  color: #a13d3d;
+}
+
 .app-header h1 {
   margin: 4px 0 0;
   color: #17202a;
@@ -340,6 +418,16 @@ button {
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 5px 16px rgba(27, 45, 54, 0.06);
+}
+
+.field-label {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  color: #52616b;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .entity-form input,

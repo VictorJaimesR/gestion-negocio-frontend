@@ -4,6 +4,20 @@ import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
+import ResumenAbonos from './ResumenAbonos'
+
+const ordenEstadosPago = {
+  parcialmente_pagada: 0,
+  pendiente: 1,
+  vencida: 2,
+  pagada: 3,
+}
+
+function ordenarPorEstadoPago(registros) {
+  return [...registros].sort((a, b) => (
+    (ordenEstadosPago[a.estado] ?? 99) - (ordenEstadosPago[b.estado] ?? 99)
+  ))
+}
 
 function Arriendos() {
   const [arriendos, setArriendos] = useState([])
@@ -109,8 +123,14 @@ function Arriendos() {
           {personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.nombre} - {persona.cedula}</option>)}
         </select>
         <CampoNumero placeholder="Canon mensual" value={canon_mensual} onChange={setCanonMensual} required />
-        <input type="date" value={fecha_inicio} onChange={(e) => setFechaInicio(e.target.value)} required />
-        <input type="date" value={fecha_fin} onChange={(e) => setFechaFin(e.target.value)} />
+        <label className="field-label">
+          Fecha de inicio del contrato
+          <input type="date" value={fecha_inicio} onChange={(e) => setFechaInicio(e.target.value)} required />
+        </label>
+        <label className="field-label">
+          Fecha de fin del contrato
+          <input type="date" value={fecha_fin} onChange={(e) => setFechaFin(e.target.value)} />
+        </label>
         <input type="number" placeholder="Día de pago" min="1" max="31" value={dia_pago} onChange={(e) => setDiaPago(e.target.value)} required />
         <select value={estado} onChange={(e) => setEstado(e.target.value)} required>
           <option value="activo">Activo</option><option value="finalizado">Finalizado</option>
@@ -131,14 +151,14 @@ function Arriendos() {
               </tr>
               {arriendoExpandido === arriendo.id && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-                  {arriendo.obligaciones.map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(obligacion.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_arriendo', id: obligacion.id, etiqueta: `Periodo ${formatearFecha(obligacion.periodo)} - ${formatearMoneda(obligacion.valor_obligacion)} - Vence ${formatearFecha(obligacion.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
+                  {ordenarPorEstadoPago(arriendo.obligaciones).map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span><ResumenAbonos movimientos={obligacion.movimientos} /></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(obligacion.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_arriendo', id: obligacion.id, movimientos: obligacion.movimientos, etiqueta: `Periodo ${formatearFecha(obligacion.periodo)} - ${formatearMoneda(obligacion.valor_obligacion)} - Vence ${formatearFecha(obligacion.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
                 </tbody></table></td></tr>
               )}
             </Fragment>
           ))}
         </tbody>
       </table></div>
-      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarDatos} />}
+      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} movimientos={movimientoModal.movimientos} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarDatos} />}
     </section>
   )
 }

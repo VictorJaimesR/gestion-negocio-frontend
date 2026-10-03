@@ -4,6 +4,20 @@ import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
+import ResumenAbonos from './ResumenAbonos'
+
+const ordenEstadosPago = {
+  parcialmente_pagada: 0,
+  pendiente: 1,
+  vencida: 2,
+  pagada: 3,
+}
+
+function ordenarPorEstadoPago(registros) {
+  return [...registros].sort((a, b) => (
+    (ordenEstadosPago[a.estado] ?? 99) - (ordenEstadosPago[b.estado] ?? 99)
+  ))
+}
 
 function Honorarios() {
   const [honorarios, setHonorarios] = useState([])
@@ -116,19 +130,19 @@ function Honorarios() {
           </tr>
         </thead>
         <tbody>
-          {honorarios.map((honorario) => (
+          {ordenarPorEstadoPago(honorarios).map((honorario) => (
             <tr key={honorario.id}>
               <td>{honorario.cliente}</td>
               <td>{honorario.concepto}</td>
               <td>{formatearMoneda(honorario.valor_honorario)}</td>
               <td>{formatearFecha(honorario.fecha_vencimiento)}</td>
-              <td><span className={`status status-${honorario.estado}`}>{honorario.estado}</span></td>
-              <td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
+              <td><span className={`status status-${honorario.estado}`}>{honorario.estado}</span><ResumenAbonos movimientos={honorario.movimientos} /></td>
+              <td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, movimientos: honorario.movimientos, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
             </tr>
           ))}
         </tbody>
       </table></div>
-      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarHonorarios} />}
+      {movimientoModal && <ModalRegistrarMovimiento tipo={movimientoModal.tipo} idRelacionado={movimientoModal.id} etiqueta={movimientoModal.etiqueta} movimientos={movimientoModal.movimientos} onCerrar={() => setMovimientoModal(null)} onRegistrado={cargarHonorarios} />}
     </section>
   )
 }

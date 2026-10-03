@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { apiFetch, leerRespuesta } from '../api'
 import CampoNumero from './CampoNumero'
+import { formatearMoneda } from './formatters'
 
 const etiquetasTipo = {
   pago_cuota: 'Registrar pago de cuota',
@@ -15,11 +16,22 @@ function fechaHoy() {
   return `${hoy.getFullYear()}-${mes}-${dia}`
 }
 
-function ModalRegistrarMovimiento({ tipo, idRelacionado, etiqueta, onCerrar, onRegistrado }) {
+function ModalRegistrarMovimiento({
+  tipo,
+  idRelacionado,
+  etiqueta,
+  movimientos = [],
+  onCerrar,
+  onRegistrado,
+}) {
   const [fecha, setFecha] = useState(fechaHoy)
   const [valor, setValor] = useState('')
   const [observaciones, setObservaciones] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const totalAbonado = movimientos.reduce(
+    (total, movimiento) => total + Number(movimiento.valor || 0),
+    0,
+  )
 
   function manejarEnvio(evento) {
     evento.preventDefault()
@@ -68,7 +80,10 @@ function ModalRegistrarMovimiento({ tipo, idRelacionado, etiqueta, onCerrar, onR
           <button type="button" onClick={onCerrar} aria-label="Cerrar" style={{width: '32px', height: '32px', padding: 0, border: '1px solid #d5dfdf', borderRadius: '5px', background: '#ffffff', color: '#5d7999', cursor: 'pointer', fontSize: '1.35rem', lineHeight: 1}}>×</button>
         </div>
         <p style={{margin: '0 0 0.25rem', color: '#5d7999', fontSize: '0.8rem', fontWeight: 700}}>Qué se está pagando</p>
-        <p style={{margin: '0 0 1rem', color: '#243b3b', fontWeight: 600}}>{etiqueta}</p>
+        <p style={{margin: '0 0 1rem', color: '#243b3b', fontWeight: 600}}>
+          {etiqueta}
+          {totalAbonado > 0 && ` - Se abonó ${formatearMoneda(totalAbonado)}`}
+        </p>
 
         <form className="entity-form" onSubmit={manejarEnvio}>
           <input type="date" value={fecha} onChange={(evento) => setFecha(evento.target.value)} required />
