@@ -167,7 +167,10 @@ function Ventas() {
           <option value="">Seleccione un comprador</option>
           {personas.map((persona) => <option key={persona.id} value={persona.id}>{persona.nombre} - {persona.cedula}</option>)}
         </select>
+        <label className="field-label">
+          Fecha de venta
         <input type="date" value={fecha_venta} onChange={(e) => setFechaVenta(e.target.value)} required />
+        </label>
         <CampoNumero value={precio_venta} onChange={setPrecioVenta} placeholder="Precio de venta" required />
         <select value={estado} onChange={(e) => setEstado(e.target.value)} required>
           <option value="">Seleccione un estado</option>

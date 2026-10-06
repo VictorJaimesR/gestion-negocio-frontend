@@ -66,7 +66,7 @@ function App() {
       <nav className="app-nav">
       <button className={seccionActiva === 'cuentas' ? 'active' : ''} onClick={() => setSeccionActiva('cuentas')}>Cuentas por cobrar</button>
       <button className={seccionActiva === 'personas' ? 'active' : ''} onClick={() => setSeccionActiva('personas')}>Clientes</button>
-      <button className={seccionActiva === 'inmuebles' ? 'active' : ''} onClick={() => setSeccionActiva('inmuebles')}>Inmuebles</button>
+      <button className={seccionActiva === 'inmuebles' ? 'active' : ''} onClick={() => setSeccionActiva('inmuebles')}>Activos</button>
       <button className={seccionActiva === 'ventas' ? 'active' : ''} onClick={() => setSeccionActiva('ventas')}>Ventas</button>
       <button className={seccionActiva === 'arriendos' ? 'active' : ''} onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
       <button className={seccionActiva === 'honorarios' ? 'active' : ''} onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>

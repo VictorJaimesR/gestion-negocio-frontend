@@ -6,7 +6,7 @@ function Inmuebles() {
     const [inmuebles, setInmuebles] = useState([]);
     const [tipo, setTipo] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [estado, setEstado] = useState('');
+    const [estado, setEstado] = useState('disponible');
     const [inmuebleEditando, setInmuebleEditando] = useState(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ function Inmuebles() {
         const nuevoInmueble = {
             tipo: tipo,
             descripcion: descripcion,
-            estado: estado
+            estado: inmuebleEditando ? estado : 'disponible'
         };
 
         apiFetch(inmuebleEditando ? `/inmuebles/${inmuebleEditando}/` : '/inmuebles/', {
@@ -46,7 +46,7 @@ function Inmuebles() {
     function limpiarFormulario() {
         setTipo('');
         setDescripcion('');
-        setEstado('');
+        setEstado('disponible');
         setInmuebleEditando(null);
     }
 
@@ -67,7 +67,7 @@ function Inmuebles() {
 
     return (
         <section className="app-view">
-            <div className="view-heading"><div><p className="eyebrow">Inventario</p><h2>Inmuebles</h2><p className="view-subtitle">Consulta y administra los activos disponibles del negocio.</p></div><span className="view-badge">{inmuebles.length} inmuebles</span></div>
+            <div className="view-heading"><div><p className="eyebrow">Inventario</p><h2>Activos</h2><p className="view-subtitle">Consulta y administra los activos disponibles del negocio.</p></div><span className="view-badge">{inmuebles.length} Activos</span></div>
 
             <form className="entity-form" onSubmit={manejarEnvio}>
                 <select
@@ -90,17 +90,7 @@ function Inmuebles() {
                     onChange={(e) => setDescripcion(e.target.value)}
                     required
                 />
-                <select
-                    value={estado}
-                    onChange={(e) => setEstado(e.target.value)}
-                    required
-                >
-                    <option value="">Seleccione un estado</option>
-                    <option value="disponible">Disponible</option>
-                    <option value="vendido">Vendido</option>
-                    <option value="arrendado">Arrendado</option>
-                </select>
-                <button type="submit">{inmuebleEditando ? 'Actualizar Inmueble' : 'Agregar Inmueble'}</button>
+                <button type="submit">{inmuebleEditando ? 'Actualizar Inmueble' : 'Agregar Activo'}</button>
                 {inmuebleEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
             </form>
             

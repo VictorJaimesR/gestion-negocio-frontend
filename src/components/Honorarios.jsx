@@ -111,8 +111,14 @@ function Honorarios() {
         </select>
         <input type="text" placeholder="Concepto" value={concepto} onChange={(e) => setConcepto(e.target.value)} required />
         <CampoNumero placeholder="Valor honorario" value={valor_honorario} onChange={setValorHonorario} required />
+        <label className="field-label">
+          Fecha de emisión
         <input type="date" value={fecha_emision} onChange={(e) => setFechaEmision(e.target.value)} required />
+        </label>
+        <label className="field-label">
+          Fecha de vencimiento
         <input type="date" value={fecha_vencimiento} onChange={(e) => setFechaVencimiento(e.target.value)} required />
+        </label>
         <select value={estado} onChange={(e) => setEstado(e.target.value)} required>
           <option value="">Seleccione un estado</option>
           <option value="pendiente">Pendiente</option>
