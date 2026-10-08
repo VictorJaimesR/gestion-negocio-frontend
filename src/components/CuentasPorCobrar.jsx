@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData } from '../dataCache'
 
 const formatoMoneda = new Intl.NumberFormat('es-CO', {
   maximumFractionDigits: 0,
@@ -84,20 +84,28 @@ function construirCuentas(ventas, arriendos, honorarios) {
 }
 
 function CuentasPorCobrar() {
-  const [cuentas, setCuentas] = useState([])
+  const [cuentas, setCuentas] = useState(() => construirCuentas(
+    getCachedData('/ventas/') || [],
+    getCachedData('/arriendos/') || [],
+    getCachedData('/honorarios/') || [],
+  ))
   const [filtroNegocio, setFiltroNegocio] = useState('todos')
   const [filtroEstado, setFiltroEstado] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
-  const [cargando, setCargando] = useState(true)
+  const [cargando, setCargando] = useState(() => (
+    !getCachedData('/ventas/')
+    && !getCachedData('/arriendos/')
+    && !getCachedData('/honorarios/')
+  ))
   const [error, setError] = useState('')
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const respuestas = await Promise.all([
-          apiFetch('/ventas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las ventas')),
-          apiFetch('/arriendos/').then((response) => leerRespuesta(response, 'No se pudieron cargar los arriendos')),
-          apiFetch('/honorarios/').then((response) => leerRespuesta(response, 'No se pudieron cargar los honorarios')),
+          cachedGet('/ventas/', 'No se pudieron cargar las ventas'),
+          cachedGet('/arriendos/', 'No se pudieron cargar los arriendos'),
+          cachedGet('/honorarios/', 'No se pudieron cargar los honorarios'),
         ])
         const [ventas, arriendos, honorarios] = respuestas
         setCuentas(construirCuentas(ventas, arriendos, honorarios))

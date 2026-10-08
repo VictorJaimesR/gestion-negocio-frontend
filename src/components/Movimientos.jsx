@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData } from '../dataCache'
 import { formatearMoneda, formatearFecha } from './formatters'
 
 const tiposMovimiento = {
@@ -9,11 +9,10 @@ const tiposMovimiento = {
 }
 
 function Movimientos() {
-  const [movimientos, setMovimientos] = useState([])
+  const [movimientos, setMovimientos] = useState(() => getCachedData('/movimientos/') || [])
 
   const cargarMovimientos = useCallback(() => {
-    return apiFetch('/movimientos/')
-      .then((response) => leerRespuesta(response, 'No se pudieron cargar los movimientos'))
+    return cachedGet('/movimientos/', 'No se pudieron cargar los movimientos')
       .then(setMovimientos)
   }, [])
 

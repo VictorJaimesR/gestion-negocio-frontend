@@ -1,9 +1,10 @@
 import {useEffect, useState} from 'react'
 import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
 
 function Personas() {
-  const [personas, setPersonas] = useState([])
+  const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
   const [nombre, setNombre] = useState('')
   const [cedula, setCedula] = useState('')
   const [telefono, setTelefono] = useState('')
@@ -18,8 +19,7 @@ function Personas() {
 
 
 function cargarPersonas() {
-    apiFetch('/personas/')
-      .then((response) => leerRespuesta(response, 'No se pudieron cargar las personas'))
+    cachedGet('/personas/', 'No se pudieron cargar las personas')
       .then((data) => setPersonas(data))
   }
 
@@ -42,6 +42,7 @@ function manejarEnvio(evento) {
     .then((response) => leerRespuesta(response, 'No se pudo guardar la persona'))
     .then(() => {
         limpiarFormulario()
+        invalidateCache('/personas/', '/ventas/', '/arriendos/', '/honorarios/', '/movimientos/')
         cargarPersonas()
     })
     .catch((error) => window.alert(error.message))
@@ -69,7 +70,10 @@ function eliminarPersona(id) {
     if (!window.confirm('¿Seguro que deseas eliminar esta persona?')) return
     apiFetch(`/personas/${id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar la persona'))
-      .then(() => cargarPersonas())
+      .then(() => {
+        invalidateCache('/personas/', '/ventas/', '/arriendos/', '/honorarios/', '/movimientos/')
+        cargarPersonas()
+      })
       .catch((error) => window.alert(error.message))
 }
 

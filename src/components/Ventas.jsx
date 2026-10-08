@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
@@ -48,10 +49,10 @@ function ordenarVentas(registros) {
 }
 
 function Ventas() {
-  const [ventas, setVentas] = useState([])
+  const [ventas, setVentas] = useState(() => getCachedData('/ventas/') || [])
   const [ventaExpandida, setVentaExpandida] = useState(null)
-  const [inmuebles, setInmuebles] = useState([])
-  const [personas, setPersonas] = useState([])
+  const [inmuebles, setInmuebles] = useState(() => getCachedData('/inmuebles/') || [])
+  const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
   const [inmueble, setInmueble] = useState('')
   const [comprador, setComprador] = useState('')
   const [fecha_venta, setFechaVenta] = useState('')
@@ -63,18 +64,18 @@ function Ventas() {
   const [ventaEditando, setVentaEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
 
-  const cargarInmuebles = useCallback(() => {
-    apiFetch('/inmuebles/').then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles')).then(setInmuebles)
+  const cargarInmuebles = useCallback((force = false) => {
+    return cachedGet('/inmuebles/', 'No se pudieron cargar los inmuebles', {force}).then(setInmuebles)
   }, [])
 
-  const cargarPersonas = useCallback(() => {
-    apiFetch('/personas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las personas')).then(setPersonas)
+  const cargarPersonas = useCallback((force = false) => {
+    return cachedGet('/personas/', 'No se pudieron cargar las personas', {force}).then(setPersonas)
   }, [])
 
-  const cargarVentas = useCallback(() => {
-    cargarInmuebles()
-    cargarPersonas()
-    apiFetch('/ventas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las ventas')).then(setVentas)
+  const cargarVentas = useCallback((force = false, forceDependencies = false) => {
+    cargarInmuebles(forceDependencies)
+    cargarPersonas(forceDependencies)
+    return cachedGet('/ventas/', 'No se pudieron cargar las ventas', {force}).then(setVentas)
   }, [cargarInmuebles, cargarPersonas])
 
   useEffect(() => {
@@ -128,7 +129,8 @@ function Ventas() {
       .then((response) => leerRespuesta(response, 'No se pudo guardar la venta'))
       .then(() => {
         limpiarFormulario()
-        cargarVentas()
+        invalidateCache('/ventas/', '/inmuebles/')
+        cargarVentas(true, true)
       })
       .catch((error) => window.alert(error.message))
   }
@@ -153,7 +155,10 @@ function Ventas() {
     if (!window.confirm('¿Seguro que deseas eliminar esta venta y su información de financiamiento?')) return
     apiFetch(`/ventas/${venta.id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar la venta'))
-      .then(() => cargarVentas())
+      .then(() => {
+        invalidateCache('/ventas/', '/inmuebles/')
+        cargarVentas(true, true)
+      })
       .catch((error) => window.alert(error.message))
   }
 

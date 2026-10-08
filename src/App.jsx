@@ -7,6 +7,7 @@ import Honorarios from './components/Honorarios'
 import CuentasPorCobrar from './components/CuentasPorCobrar'
 import Ventas from './components/Ventas'
 import Movimientos from './components/Movimientos'
+import { clearCache } from './dataCache'
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null)
@@ -15,6 +16,7 @@ function App() {
 
   function cerrarSesion() {
     localStorage.removeItem('token')
+    clearCache()
     setMenuUsuarioAbierto(false)
     setToken(null)
   }
@@ -23,6 +25,7 @@ function App() {
     return (
       <Login
         alIniciarSesion={(nuevoToken) => {
+          clearCache()
           setMenuUsuarioAbierto(false)
           setToken(nuevoToken)
         }}

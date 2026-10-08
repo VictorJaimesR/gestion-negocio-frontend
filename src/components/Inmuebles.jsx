@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react';
 import { AccionesTabla } from './AccionesTabla';
 import { apiFetch, leerRespuesta } from '../api';
+import { cachedGet, getCachedData, invalidateCache } from '../dataCache';
 
 function Inmuebles() {
-    const [inmuebles, setInmuebles] = useState([]);
+    const [inmuebles, setInmuebles] = useState(() => getCachedData('/inmuebles/') || []);
     const [tipo, setTipo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('disponible');
@@ -14,8 +15,7 @@ function Inmuebles() {
     }, []);
 
     function cargarInmuebles() {
-        apiFetch('/inmuebles/')
-            .then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles'))
+        cachedGet('/inmuebles/', 'No se pudieron cargar los inmuebles')
             .then((data) => setInmuebles(data));
     }
 
@@ -36,6 +36,7 @@ function Inmuebles() {
         .then((response) => leerRespuesta(response, 'No se pudo guardar el inmueble'))
         .then(() => {
             limpiarFormulario();
+            invalidateCache('/inmuebles/', '/ventas/', '/arriendos/', '/movimientos/');
             cargarInmuebles();
         })
         .catch((error) => {
@@ -61,7 +62,10 @@ function Inmuebles() {
         if (!window.confirm('¿Seguro que deseas eliminar este inmueble?')) return;
         apiFetch(`/inmuebles/${id}/`, {method: 'DELETE'})
             .then((response) => leerRespuesta(response, 'No se pudo eliminar el inmueble'))
-            .then(() => cargarInmuebles())
+            .then(() => {
+                invalidateCache('/inmuebles/', '/ventas/', '/arriendos/', '/movimientos/');
+                cargarInmuebles();
+            })
             .catch((error) => window.alert(error.message));
     }
 

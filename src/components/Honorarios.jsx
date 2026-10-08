@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
@@ -20,8 +21,8 @@ function ordenarPorEstadoPago(registros) {
 }
 
 function Honorarios() {
-  const [honorarios, setHonorarios] = useState([])
-  const [personas, setPersonas] = useState([])
+  const [honorarios, setHonorarios] = useState(() => getCachedData('/honorarios/') || [])
+  const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
   const [cliente, setCliente] = useState('')
   const [concepto, setConcepto] = useState('')
   const [valor_honorario, setValorHonorario] = useState('')
@@ -31,16 +32,14 @@ function Honorarios() {
   const [honorarioEditando, setHonorarioEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
 
-  const cargarPersonas = useCallback(() => {
-    apiFetch('/personas/')
-      .then((response) => leerRespuesta(response, 'No se pudieron cargar las personas'))
+  const cargarPersonas = useCallback((force = false) => {
+    return cachedGet('/personas/', 'No se pudieron cargar las personas', {force})
       .then((data) => setPersonas(data))
   }, [])
 
-  const cargarHonorarios = useCallback(() => {
-    cargarPersonas()
-    apiFetch('/honorarios/')
-      .then((response) => leerRespuesta(response, 'No se pudieron cargar los honorarios'))
+  const cargarHonorarios = useCallback((force = false) => {
+    cargarPersonas(force)
+    return cachedGet('/honorarios/', 'No se pudieron cargar los honorarios', {force})
       .then((data) => setHonorarios(data))
   }, [cargarPersonas])
 
@@ -76,7 +75,8 @@ function Honorarios() {
       .then((response) => leerRespuesta(response, 'No se pudo guardar el honorario'))
       .then(() => {
         limpiarFormulario()
-        cargarHonorarios()
+        invalidateCache('/honorarios/')
+        cargarHonorarios(true)
       })
       .catch((error) => window.alert(error.message))
   }
@@ -95,7 +95,10 @@ function Honorarios() {
     if (!window.confirm('¿Seguro que deseas eliminar este honorario?')) return
     apiFetch(`/honorarios/${id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar el honorario'))
-      .then(() => cargarHonorarios())
+      .then(() => {
+        invalidateCache('/honorarios/')
+        cargarHonorarios(true)
+      })
       .catch((error) => window.alert(error.message))
   }
 

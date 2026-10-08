@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, useCallback } from 'react'
 import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
+import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
@@ -31,10 +32,10 @@ function ordenarArriendos(registros) {
 }
 
 function Arriendos() {
-  const [arriendos, setArriendos] = useState([])
+  const [arriendos, setArriendos] = useState(() => getCachedData('/arriendos/') || [])
   const [arriendoExpandido, setArriendoExpandido] = useState(null)
-  const [inmuebles, setInmuebles] = useState([])
-  const [personas, setPersonas] = useState([])
+  const [inmuebles, setInmuebles] = useState(() => getCachedData('/inmuebles/') || [])
+  const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
   const [inmueble, setInmueble] = useState('')
   const [arrendatario, setArrendatario] = useState('')
   const [canon_mensual, setCanonMensual] = useState('')
@@ -45,11 +46,11 @@ function Arriendos() {
   const [arriendoEditando, setArriendoEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
 
-  const cargarDatos = useCallback(() => {
+  const cargarDatos = useCallback((force = false, forceDependencies = false) => {
     Promise.all([
-      apiFetch('/arriendos/').then((response) => leerRespuesta(response, 'No se pudieron cargar los arriendos')),
-      apiFetch('/inmuebles/').then((response) => leerRespuesta(response, 'No se pudieron cargar los inmuebles')),
-      apiFetch('/personas/').then((response) => leerRespuesta(response, 'No se pudieron cargar las personas')),
+      cachedGet('/arriendos/', 'No se pudieron cargar los arriendos', {force}),
+      cachedGet('/inmuebles/', 'No se pudieron cargar los inmuebles', {force: forceDependencies}),
+      cachedGet('/personas/', 'No se pudieron cargar las personas', {force: forceDependencies}),
     ]).then(([arriendosData, inmueblesData, personasData]) => {
       setArriendos(arriendosData)
       setInmuebles(inmueblesData)
@@ -91,7 +92,8 @@ function Arriendos() {
       .then((response) => leerRespuesta(response, 'No se pudo guardar el arriendo'))
       .then(() => {
         limpiarFormulario()
-        cargarDatos()
+        invalidateCache('/arriendos/', '/inmuebles/')
+        cargarDatos(true, true)
       })
       .catch((error) => window.alert(error.message))
   }
@@ -115,7 +117,10 @@ function Arriendos() {
     if (!window.confirm('¿Seguro que deseas eliminar este arriendo y sus obligaciones?')) return
     apiFetch(`/arriendos/${arriendo.id}/`, {method: 'DELETE'})
       .then((response) => leerRespuesta(response, 'No se pudo eliminar el arriendo'))
-      .then(() => cargarDatos())
+      .then(() => {
+        invalidateCache('/arriendos/', '/inmuebles/')
+        cargarDatos(true, true)
+      })
       .catch((error) => window.alert(error.message))
   }
 

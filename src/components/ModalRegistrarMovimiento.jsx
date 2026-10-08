@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { apiFetch, leerRespuesta } from '../api'
+import { invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda } from './formatters'
 
@@ -53,7 +54,13 @@ function ModalRegistrarMovimiento({
     })
       .then((response) => leerRespuesta(response, 'No se pudo registrar el pago'))
       .then(() => {
-        onRegistrado()
+        const recursoRelacionado = {
+          pago_cuota: '/ventas/',
+          pago_arriendo: '/arriendos/',
+          pago_honorario: '/honorarios/',
+        }[tipo]
+        invalidateCache('/movimientos/', recursoRelacionado)
+        onRegistrado(true)
         onCerrar()
       })
       .catch((error) => window.alert(error.message))
