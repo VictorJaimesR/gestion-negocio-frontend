@@ -19,6 +19,17 @@ function ordenarPorEstadoPago(registros) {
   ))
 }
 
+const ordenEstadosArriendo = {
+  activo: 0,
+  finalizado: 1,
+}
+
+function ordenarArriendos(registros) {
+  return [...registros].sort((a, b) => (
+    (ordenEstadosArriendo[a.estado] ?? 99) - (ordenEstadosArriendo[b.estado] ?? 99)
+  ))
+}
+
 function Arriendos() {
   const [arriendos, setArriendos] = useState([])
   const [arriendoExpandido, setArriendoExpandido] = useState(null)
@@ -142,7 +153,7 @@ function Arriendos() {
       <div className="table-wrap"><table className="data-table">
         <thead><tr><th></th><th>Inmueble</th><th>Arrendatario</th><th>Canon Mensual</th><th>Día de Pago</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
-          {arriendos.map((arriendo) => (
+          {ordenarArriendos(arriendos).map((arriendo) => (
             <Fragment key={arriendo.id}>
               <tr>
                 <td><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)}>{arriendoExpandido === arriendo.id ? '−' : '+'}</button></td>

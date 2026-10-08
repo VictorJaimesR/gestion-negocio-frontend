@@ -35,6 +35,18 @@ function ordenarPorEstadoPago(registros) {
   ))
 }
 
+const ordenEstadosVenta = {
+  activa: 0,
+  pagada: 1,
+  cancelada: 2,
+}
+
+function ordenarVentas(registros) {
+  return [...registros].sort((a, b) => (
+    (ordenEstadosVenta[a.estado] ?? 99) - (ordenEstadosVenta[b.estado] ?? 99)
+  ))
+}
+
 function Ventas() {
   const [ventas, setVentas] = useState([])
   const [ventaExpandida, setVentaExpandida] = useState(null)
@@ -196,7 +208,7 @@ function Ventas() {
       <div className="table-wrap"><table className="data-table">
         <thead><tr><th></th><th>Inmueble</th><th>Comprador</th><th>Fecha</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
-          {ventas.map((venta) => (
+          {ordenarVentas(ventas).map((venta) => (
             <Fragment key={venta.id}>
               <tr>
                 <td><button type="button" onClick={() => alternarExpandir(venta.id)}>{ventaExpandida === venta.id ? '−' : '+'}</button></td>
