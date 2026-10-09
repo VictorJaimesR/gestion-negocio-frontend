@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
 import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
+import { Feedback } from './Feedback'
 
 function Personas() {
   const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
@@ -11,6 +12,8 @@ function Personas() {
   const [direccion, setDireccion] = useState('')
   const [email, setEmail] = useState('')
     const [personaEditando, setPersonaEditando] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
 
   useEffect(() => {
@@ -25,6 +28,8 @@ function cargarPersonas() {
 
 function manejarEnvio(evento) {
     evento.preventDefault()
+    setError('')
+    setSuccess('')
 
     const nuevaPersona = {
         nombre: nombre,
@@ -44,8 +49,9 @@ function manejarEnvio(evento) {
         limpiarFormulario()
         invalidateCache('/personas/', '/ventas/', '/arriendos/', '/honorarios/', '/movimientos/')
         cargarPersonas()
+        setSuccess(personaEditando ? 'Persona actualizada correctamente.' : 'Persona guardada correctamente.')
     })
-    .catch((error) => window.alert(error.message))
+    .catch((error) => setError(error.message))
 }
 
 function limpiarFormulario() {
@@ -74,12 +80,13 @@ function eliminarPersona(id) {
         invalidateCache('/personas/', '/ventas/', '/arriendos/', '/honorarios/', '/movimientos/')
         cargarPersonas()
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
 }
 
   return (
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Directorio</p><h2>Personas</h2><p className="view-subtitle">Gestiona clientes, compradores y arrendatarios.</p></div><span className="view-badge">{personas.length} personas</span></div>
+      <Feedback error={error} success={success} />
 
     <form className="entity-form" onSubmit={manejarEnvio}>
         <input 

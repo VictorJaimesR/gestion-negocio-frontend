@@ -6,6 +6,7 @@ import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
+import { Feedback } from './Feedback'
 
 function calcularValorCuota(precio, pagoInicial, numeroCuotas) {
   if (
@@ -63,6 +64,8 @@ function Ventas() {
   const [numero_cuotas, setNumeroCuotas] = useState('')
   const [ventaEditando, setVentaEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const cargarInmuebles = useCallback((force = false) => {
     return cachedGet('/inmuebles/', 'No se pudieron cargar los inmuebles', {force}).then(setInmuebles)
@@ -96,18 +99,20 @@ function Ventas() {
 
   function manejarEnvio(evento) {
     evento.preventDefault()
+    setError('')
+    setSuccess('')
     const precio = Number(precio_venta)
     const pagoInicial = Number(pago_inicial)
     const cuotas = Number(numero_cuotas)
     const valorCuota = Number(calcularValorCuota(precio_venta, pago_inicial, numero_cuotas))
 
     if (tipoPago === 'financiada' && pagoInicial > precio) {
-      window.alert('El pago inicial no puede ser mayor que el precio de venta.')
+      setError('El pago inicial no puede ser mayor que el precio de venta.')
       return
     }
 
     if (tipoPago === 'financiada' && pagoInicial + (cuotas * valorCuota) < precio) {
-      window.alert('El pago inicial más el valor de las cuotas debe cubrir el precio de venta.')
+      setError('El pago inicial más el valor de las cuotas debe cubrir el precio de venta.')
       return
     }
 
@@ -131,8 +136,9 @@ function Ventas() {
         limpiarFormulario()
         invalidateCache('/ventas/', '/inmuebles/')
         cargarVentas(true, true)
+        setSuccess(ventaEditando ? 'Venta actualizada correctamente.' : 'Venta agregada correctamente.')
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   function editarVenta(venta) {
@@ -149,7 +155,7 @@ function Ventas() {
 
   function eliminarVenta(venta) {
     if (!['pagada', 'cancelada'].includes(venta.estado)) {
-      window.alert('Solo se puede eliminar una venta pagada o cancelada.')
+      setError('Solo se puede eliminar una venta pagada o cancelada.')
       return
     }
     if (!window.confirm('¿Seguro que deseas eliminar esta venta y su información de financiamiento?')) return
@@ -159,7 +165,7 @@ function Ventas() {
         invalidateCache('/ventas/', '/inmuebles/')
         cargarVentas(true, true)
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   function alternarExpandir(id) {
@@ -173,6 +179,7 @@ function Ventas() {
   return (
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión comercial</p><h2>Ventas</h2><p className="view-subtitle">Administra ventas de contado y financiadas.</p></div><span className="view-badge">{ventas.length} ventas</span></div>
+      <Feedback error={error} success={success} />
       <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>

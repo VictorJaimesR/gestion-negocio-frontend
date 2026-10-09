@@ -3,6 +3,7 @@ import { apiFetch, leerRespuesta } from '../api'
 import { invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda } from './formatters'
+import { Feedback } from './Feedback'
 
 const etiquetasTipo = {
   pago_cuota: 'Registrar pago de cuota',
@@ -29,6 +30,7 @@ function ModalRegistrarMovimiento({
   const [valor, setValor] = useState('')
   const [observaciones, setObservaciones] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState('')
   const totalAbonado = movimientos.reduce(
     (total, movimiento) => total + Number(movimiento.valor || 0),
     0,
@@ -36,6 +38,7 @@ function ModalRegistrarMovimiento({
 
   function manejarEnvio(evento) {
     evento.preventDefault()
+    setError('')
     setGuardando(true)
 
     const movimiento = {
@@ -63,7 +66,7 @@ function ModalRegistrarMovimiento({
         onRegistrado(true)
         onCerrar()
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
       .finally(() => setGuardando(false))
   }
 
@@ -73,30 +76,27 @@ function ModalRegistrarMovimiento({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-movimiento-titulo"
-      style={{position: 'fixed', inset: 0, zIndex: 10, display: 'grid', placeItems: 'center', padding: '1rem', background: 'rgba(24, 43, 43, 0.48)'}}
     >
-      <div
-        className="modal-content"
-        style={{width: 'min(100%, 560px)', maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto', padding: '1.5rem', borderRadius: '12px', background: '#ffffff', boxShadow: '0 18px 50px rgba(24, 43, 43, 0.24)'}}
-      >
+      <div className="modal-content">
         <div className="view-heading">
           <div>
             <p className="eyebrow">Registro financiero</p>
             <h2 id="modal-movimiento-titulo">{etiquetasTipo[tipo]}</h2>
           </div>
-          <button type="button" onClick={onCerrar} aria-label="Cerrar" style={{width: '32px', height: '32px', padding: 0, border: '1px solid #d5dfdf', borderRadius: '5px', background: '#ffffff', color: '#5d7999', cursor: 'pointer', fontSize: '1.35rem', lineHeight: 1}}>×</button>
+          <button type="button" className="modal-close" onClick={onCerrar} aria-label="Cerrar">×</button>
         </div>
-        <p style={{margin: '0 0 0.25rem', color: '#5d7999', fontSize: '0.8rem', fontWeight: 700}}>Qué se está pagando</p>
-        <p style={{margin: '0 0 1rem', color: '#243b3b', fontWeight: 600}}>
+        <p className="modal-label">Qué se está pagando</p>
+        <p className="modal-description">
           {etiqueta}
           {totalAbonado > 0 && ` - Se abonó ${formatearMoneda(totalAbonado)}`}
         </p>
+        <Feedback error={error} />
 
         <form className="entity-form" onSubmit={manejarEnvio}>
           <input type="date" value={fecha} onChange={(evento) => setFecha(evento.target.value)} required />
           <CampoNumero value={valor} onChange={setValor} placeholder="Valor del pago" required />
           <textarea value={observaciones} onChange={(evento) => setObservaciones(evento.target.value)} placeholder="Observaciones (opcional)" rows="3" />
-          <div style={{display: 'flex', gap: '0.75rem', justifyContent: 'flex-end'}}>
+          <div className="modal-actions">
             <button type="button" onClick={onCerrar}>Cancelar</button>
             <button type="submit" disabled={guardando}>{guardando ? 'Guardando...' : 'Registrar pago'}</button>
           </div>

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { cachedGet, getCachedData } from '../dataCache'
+import { Feedback } from './Feedback'
 import { formatearMoneda, formatearFecha } from './formatters'
 
 const tiposMovimiento = {
@@ -10,6 +11,7 @@ const tiposMovimiento = {
 
 function Movimientos() {
   const [movimientos, setMovimientos] = useState(() => getCachedData('/movimientos/') || [])
+  const [error, setError] = useState('')
 
   const cargarMovimientos = useCallback(() => {
     return cachedGet('/movimientos/', 'No se pudieron cargar los movimientos')
@@ -17,7 +19,7 @@ function Movimientos() {
   }, [])
 
   useEffect(() => {
-    cargarMovimientos().catch((error) => window.alert(error.message))
+    cargarMovimientos().catch((error) => setError(error.message))
   }, [cargarMovimientos])
 
   return (
@@ -28,6 +30,7 @@ function Movimientos() {
           <h2>Movimientos</h2>
           <p className="view-subtitle">Consulta el historial de pagos registrados.</p>
         </div>
+        <Feedback error={error} />
         <span className="view-badge">{movimientos.length} movimientos</span>
       </div>
 

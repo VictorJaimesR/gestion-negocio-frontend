@@ -4,10 +4,13 @@ function Login({ alIniciarSesion }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [iniciandoSesion, setIniciandoSesion] = useState(false)
 
   function manejarEnvio(evento) {
     evento.preventDefault()
+    if (iniciandoSesion) return
     setError('')
+    setIniciandoSesion(true)
 
     fetch(`${import.meta.env.VITE_API_URL}/login/`, {
       method: 'POST',
@@ -26,6 +29,9 @@ function Login({ alIniciarSesion }) {
       })
       .catch(() => {
         setError('Usuario o contraseña incorrectos')
+      })
+      .finally(() => {
+        setIniciandoSesion(false)
       })
   }
 
@@ -64,7 +70,9 @@ function Login({ alIniciarSesion }) {
               required
             />
           </label>
-          <button type="submit">Iniciar sesión</button>
+          <button type="submit" disabled={iniciandoSesion}>
+            {iniciandoSesion ? 'Verificando credenciales...' : 'Iniciar sesión'}
+          </button>
         </form>
         {error && <p className="login-error" role="alert">{error}</p>}
         <p className="login-footer">Acceso seguro para tu equipo</p>

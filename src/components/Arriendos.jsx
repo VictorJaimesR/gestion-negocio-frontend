@@ -6,6 +6,7 @@ import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
+import { Feedback } from './Feedback'
 
 const ordenEstadosPago = {
   parcialmente_pagada: 0,
@@ -45,6 +46,8 @@ function Arriendos() {
   const [estado, setEstado] = useState('activo')
   const [arriendoEditando, setArriendoEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const cargarDatos = useCallback((force = false, forceDependencies = false) => {
     Promise.all([
@@ -75,6 +78,8 @@ function Arriendos() {
 
   function manejarEnvio(evento) {
     evento.preventDefault()
+    setError('')
+    setSuccess('')
     const nuevoArriendo = {
       inmueble,
       arrendatario,
@@ -94,8 +99,9 @@ function Arriendos() {
         limpiarFormulario()
         invalidateCache('/arriendos/', '/inmuebles/')
         cargarDatos(true, true)
+        setSuccess(arriendoEditando ? 'Arriendo actualizado correctamente.' : 'Arriendo agregado correctamente.')
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   function editarArriendo(arriendo) {
@@ -111,7 +117,7 @@ function Arriendos() {
 
   function eliminarArriendo(arriendo) {
     if (arriendo.estado !== 'finalizado') {
-      window.alert('Solo se puede eliminar un arriendo finalizado.')
+      setError('Solo se puede eliminar un arriendo finalizado.')
       return
     }
     if (!window.confirm('¿Seguro que deseas eliminar este arriendo y sus obligaciones?')) return
@@ -121,12 +127,13 @@ function Arriendos() {
         invalidateCache('/arriendos/', '/inmuebles/')
         cargarDatos(true, true)
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   return (
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión inmobiliaria</p><h2>Arriendos</h2><p className="view-subtitle">Administra contratos, cánones y obligaciones.</p></div><span className="view-badge">{arriendos.length} arriendos</span></div>
+      <Feedback error={error} success={success} />
       <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>

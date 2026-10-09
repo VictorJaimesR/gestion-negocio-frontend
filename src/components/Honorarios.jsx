@@ -6,6 +6,7 @@ import CampoNumero from './CampoNumero'
 import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
+import { Feedback } from './Feedback'
 
 const ordenEstadosPago = {
   parcialmente_pagada: 0,
@@ -31,6 +32,8 @@ function Honorarios() {
   const [estado, setEstado] = useState('')
   const [honorarioEditando, setHonorarioEditando] = useState(null)
   const [movimientoModal, setMovimientoModal] = useState(null)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   const cargarPersonas = useCallback((force = false) => {
     return cachedGet('/personas/', 'No se pudieron cargar las personas', {force})
@@ -59,6 +62,8 @@ function Honorarios() {
 
   function manejarEnvio(evento) {
     evento.preventDefault()
+    setError('')
+    setSuccess('')
     const nuevoHonorario = {
       cliente,
       concepto,
@@ -77,8 +82,9 @@ function Honorarios() {
         limpiarFormulario()
         invalidateCache('/honorarios/')
         cargarHonorarios(true)
+        setSuccess(honorarioEditando ? 'Honorario actualizado correctamente.' : 'Honorario agregado correctamente.')
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   function editarHonorario(honorario) {
@@ -99,12 +105,13 @@ function Honorarios() {
         invalidateCache('/honorarios/')
         cargarHonorarios(true)
       })
-      .catch((error) => window.alert(error.message))
+      .catch((error) => setError(error.message))
   }
 
   return (
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión de servicios</p><h2>Honorarios</h2><p className="view-subtitle">Controla servicios profesionales y sus vencimientos.</p></div><span className="view-badge">{honorarios.length} honorarios</span></div>
+      <Feedback error={error} success={success} />
       <form className="entity-form" onSubmit={manejarEnvio}>
         <select name="cliente" value={cliente} onChange={(e) => setCliente(e.target.value)} required>
           <option value="">Seleccione un cliente</option>

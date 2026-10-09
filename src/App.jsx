@@ -18,6 +18,7 @@ function App() {
     localStorage.removeItem('token')
     clearCache()
     setMenuUsuarioAbierto(false)
+    setSeccionActiva('cuentas')
     setToken(null)
   }
 
@@ -27,6 +28,7 @@ function App() {
         alIniciarSesion={(nuevoToken) => {
           clearCache()
           setMenuUsuarioAbierto(false)
+          setSeccionActiva('cuentas')
           setToken(nuevoToken)
         }}
       />

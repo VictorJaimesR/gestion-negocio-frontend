@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import { AccionesTabla } from './AccionesTabla';
 import { apiFetch, leerRespuesta } from '../api';
 import { cachedGet, getCachedData, invalidateCache } from '../dataCache';
+import { Feedback } from './Feedback'
 
 function Inmuebles() {
     const [inmuebles, setInmuebles] = useState(() => getCachedData('/inmuebles/') || []);
@@ -9,6 +10,8 @@ function Inmuebles() {
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('disponible');
     const [inmuebleEditando, setInmuebleEditando] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         cargarInmuebles();
@@ -21,6 +24,8 @@ function Inmuebles() {
 
     function manejarEnvio(evento) {
         evento.preventDefault();
+        setError('');
+        setSuccess('');
 
         const nuevoInmueble = {
             tipo: tipo,
@@ -38,9 +43,10 @@ function Inmuebles() {
             limpiarFormulario();
             invalidateCache('/inmuebles/', '/ventas/', '/arriendos/', '/movimientos/');
             cargarInmuebles();
+            setSuccess(inmuebleEditando ? 'Activo actualizado correctamente.' : 'Activo agregado correctamente.');
         })
         .catch((error) => {
-            window.alert(error.message);
+            setError(error.message);
         });
     }
 
@@ -66,12 +72,13 @@ function Inmuebles() {
                 invalidateCache('/inmuebles/', '/ventas/', '/arriendos/', '/movimientos/');
                 cargarInmuebles();
             })
-            .catch((error) => window.alert(error.message));
+            .catch((error) => setError(error.message));
     }
 
     return (
         <section className="app-view">
             <div className="view-heading"><div><p className="eyebrow">Inventario</p><h2>Activos</h2><p className="view-subtitle">Consulta y administra los activos disponibles del negocio.</p></div><span className="view-badge">{inmuebles.length} Activos</span></div>
+            <Feedback error={error} success={success} />
 
             <form className="entity-form" onSubmit={manejarEnvio}>
                 <select

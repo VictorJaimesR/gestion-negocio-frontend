@@ -2,17 +2,37 @@
   box-sizing: border-box;
 }
 
+:root {
+  --accent: #287c78;
+  --accent-dark: #1f6663;
+  --accent-soft: #f1f6f6;
+  --text: #17202a;
+  --text-muted: #66727d;
+  --border: #e0e6e7;
+  --danger: #a13d3d;
+  --surface: #ffffff;
+  --surface-muted: #f8fbfb;
+  --shadow: 0 5px 16px rgba(27, 45, 54, 0.06);
+}
+
+html,
+body {
+  min-width: 320px;
+}
+
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
   background-color: #f4f5f7;
   color: #1a1a1a;
+  overflow-x: hidden;
 }
 
 #root {
-  max-width: 1100px;
+  width: min(100%, 1240px);
+  max-width: none;
   margin: 0 auto;
-  padding: 2rem;
+  padding: clamp(0.75rem, 3vw, 2rem);
 }
 
 h1 {
@@ -88,6 +108,26 @@ table table th {
 
 button {
   font-family: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #9ed5d0;
+  outline-offset: 2px;
 }
 
 .acciones-tabla {
@@ -498,6 +538,26 @@ button {
   background: #f8fbfb;
 }
 
+.feedback {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+.feedback-error {
+  border-color: #edb8b8;
+  color: #a13d3d;
+  background: #fff4f4;
+}
+
+.feedback-success {
+  border-color: #b8ddd6;
+  color: #20655f;
+  background: #effaf8;
+}
+
 .detail-cell > table {
   margin-top: 14px;
 }
@@ -806,4 +866,189 @@ button {
 @media (max-width: 480px) {
   .cobros-summary { grid-template-columns: 1fr; }
   .cobros-heading h2 { font-size: 1.6rem; }
+}
+
+/* Responsive and interaction refinements */
+.login-form button:disabled:hover {
+  background: #287c78;
+  transform: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(24, 43, 43, 0.48);
+}
+
+.modal-content {
+  width: min(100%, 560px);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1rem, 4vw, 1.5rem);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 18px 50px rgba(24, 43, 43, 0.24);
+}
+
+.modal-content .view-heading {
+  margin-top: 0;
+}
+
+.modal-close {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #d5dfdf;
+  border-radius: 6px;
+  background: var(--surface);
+  color: #5d7999;
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: var(--accent-soft);
+}
+
+.modal-label {
+  margin: 0 0 0.25rem;
+  color: #5d7999;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.modal-description {
+  margin: 0 0 1rem;
+  color: #243b3b;
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+textarea {
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+  padding: 10px 11px;
+  border: 1px solid #cbd6d8;
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+@media (max-width: 760px) {
+  .app-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    scrollbar-width: thin;
+  }
+
+  .app-nav button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  .entity-form {
+    padding: 16px;
+  }
+
+  .view-heading h2,
+  .cobros-heading h2 {
+    font-size: 1.65rem;
+  }
+
+  .view-badge,
+  .cobros-periodo {
+    align-self: flex-start;
+  }
+
+  .data-table,
+  .cobros-table {
+    min-width: 680px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1023px) {
+  .entity-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cobros-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  #root {
+    padding: 0.75rem;
+  }
+
+  .app-header {
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.45rem;
+  }
+
+  .login-page {
+    min-height: 100dvh;
+    padding: 0;
+  }
+
+  .login-card {
+    padding: 22px 18px;
+    border-radius: 10px;
+  }
+
+  .login-heading h2 {
+    font-size: 1.7rem;
+  }
+
+  .cobros-card {
+    min-height: 112px;
+    padding: 16px;
+  }
+
+  .cobros-card strong {
+    font-size: 1.25rem;
+  }
+
+  .cobros-toolbar {
+    padding: 12px;
+  }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    max-height: calc(100dvh - 1rem);
+    border-radius: 10px;
+  }
 }
