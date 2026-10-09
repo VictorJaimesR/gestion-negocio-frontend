@@ -117,10 +117,10 @@ function Inmuebles() {
                 <tbody>
                     {inmuebles.map((inmueble) => (
                         <tr key={inmueble.id}>
-                            <td>{inmueble.tipo}</td>
-                            <td>{inmueble.descripcion}</td>
-                            <td>{inmueble.estado}</td>
-                            <td>
+                            <td data-label="Tipo">{inmueble.tipo}</td>
+                            <td data-label="Descripción">{inmueble.descripcion}</td>
+                            <td data-label="Estado">{inmueble.estado}</td>
+                            <td data-label="Acciones">
                                 <AccionesTabla
                                     onEditar={() => editarInmueble(inmueble)}
                                     onEliminar={() => eliminarInmueble(inmueble.id)}

@@ -148,12 +148,12 @@ function Honorarios() {
         <tbody>
           {ordenarPorEstadoPago(honorarios).map((honorario) => (
             <tr key={honorario.id}>
-              <td>{honorario.cliente}</td>
-              <td>{honorario.concepto}</td>
-              <td>{formatearMoneda(honorario.valor_honorario)}</td>
-              <td>{formatearFecha(honorario.fecha_vencimiento)}</td>
-              <td><span className={`status status-${honorario.estado}`}>{honorario.estado}</span><ResumenAbonos movimientos={honorario.movimientos} /></td>
-              <td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, movimientos: honorario.movimientos, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
+              <td data-label="Cliente">{honorario.cliente}</td>
+              <td data-label="Concepto">{honorario.concepto}</td>
+              <td data-label="Valor">{formatearMoneda(honorario.valor_honorario)}</td>
+              <td data-label="Vencimiento">{formatearFecha(honorario.fecha_vencimiento)}</td>
+              <td data-label="Estado"><span className={`status status-${honorario.estado}`}>{honorario.estado}</span><ResumenAbonos movimientos={honorario.movimientos} /></td>
+              <td data-label="Acciones"><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, movimientos: honorario.movimientos, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
             </tr>
           ))}
         </tbody>

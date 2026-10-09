@@ -168,9 +168,9 @@ function Arriendos() {
           {ordenarArriendos(arriendos).map((arriendo) => (
             <Fragment key={arriendo.id}>
               <tr>
-                <td><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)}>{arriendoExpandido === arriendo.id ? '−' : '+'}</button></td>
-                <td>{arriendo.inmueble}</td><td>{arriendo.arrendatario}</td><td>{formatearMoneda(arriendo.canon_mensual)}</td><td>{arriendo.dia_pago}</td><td><span className={`status status-${arriendo.estado}`}>{arriendo.estado}</span></td>
-                <td><AccionesTabla onEditar={() => editarArriendo(arriendo)} onEliminar={() => eliminarArriendo(arriendo)} /></td>
+                <td data-label="Detalle"><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)}>{arriendoExpandido === arriendo.id ? '−' : '+'}</button></td>
+                <td data-label="Inmueble">{arriendo.inmueble}</td><td data-label="Arrendatario">{arriendo.arrendatario}</td><td data-label="Canon mensual">{formatearMoneda(arriendo.canon_mensual)}</td><td data-label="Día de pago">{arriendo.dia_pago}</td><td data-label="Estado"><span className={`status status-${arriendo.estado}`}>{arriendo.estado}</span></td>
+                <td data-label="Acciones"><AccionesTabla onEditar={() => editarArriendo(arriendo)} onEliminar={() => eliminarArriendo(arriendo)} /></td>
               </tr>
               {arriendoExpandido === arriendo.id && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>

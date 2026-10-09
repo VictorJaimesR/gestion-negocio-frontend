@@ -234,9 +234,9 @@ function CuentasPorCobrar() {
                 <tbody>
                   {resumenPersonas.map((persona) => (
                     <tr key={persona.nombre}>
-                      <td className="cobros-persona">{persona.nombre}</td>
-                      <td>{persona.obligaciones}</td>
-                      <td className="cobros-amount">{formatearMoneda(persona.total)}</td>
+                      <td data-label="Cliente" className="cobros-persona">{persona.nombre}</td>
+                      <td data-label="Obligaciones">{persona.obligaciones}</td>
+                      <td data-label="Total adeudado" className="cobros-amount">{formatearMoneda(persona.total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -259,12 +259,12 @@ function CuentasPorCobrar() {
               <tbody>
                 {cuentasFiltradas.map((cuenta) => (
                   <tr key={cuenta.id}>
-                    <td className="cobros-persona">{cuenta.persona}</td>
-                    <td><span className={`cobros-tag cobros-tag-${cuenta.negocio.toLowerCase()}`}>{cuenta.negocio}</span></td>
-                    <td>{cuenta.referencia}</td>
-                    <td>{formatearFecha(cuenta.vencimiento)}</td>
-                    <td><span className={`cobros-status cobros-status-${cuenta.estado}`}>{etiquetaEstado(cuenta.estado)}</span></td>
-                    <td className="cobros-amount">{formatearMoneda(cuenta.monto)}</td>
+                    <td data-label="Cliente" className="cobros-persona">{cuenta.persona}</td>
+                    <td data-label="Negocio"><span className={`cobros-tag cobros-tag-${cuenta.negocio.toLowerCase()}`}>{cuenta.negocio}</span></td>
+                    <td data-label="Referencia">{cuenta.referencia}</td>
+                    <td data-label="Vencimiento">{formatearFecha(cuenta.vencimiento)}</td>
+                    <td data-label="Estado"><span className={`cobros-status cobros-status-${cuenta.estado}`}>{etiquetaEstado(cuenta.estado)}</span></td>
+                    <td data-label="Saldo" className="cobros-amount">{formatearMoneda(cuenta.monto)}</td>
                   </tr>
                 ))}
                 {cuentasFiltradas.length === 0 && (

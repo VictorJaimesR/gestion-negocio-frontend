@@ -142,12 +142,12 @@ function eliminarPersona(id) {
             <tbody>
                 {personas.map((persona) => (
                     <tr key={persona.id}>
-                        <td>{persona.id}</td>
-                        <td>{persona.nombre}</td>
-                        <td>{persona.cedula}</td>
-                        <td>{persona.telefono}</td>
-                        <td>{persona.email}</td>
-                        <td>
+                        <td data-label="ID">{persona.id}</td>
+                        <td data-label="Nombre">{persona.nombre}</td>
+                        <td data-label="Cédula">{persona.cedula}</td>
+                        <td data-label="Teléfono">{persona.telefono}</td>
+                        <td data-label="Correo">{persona.email}</td>
+                        <td data-label="Acciones">
                             <AccionesTabla
                                 onEditar={() => editarPersona(persona)}
                                 onEliminar={() => eliminarPersona(persona.id)}

@@ -223,9 +223,9 @@ function Ventas() {
           {ordenarVentas(ventas).map((venta) => (
             <Fragment key={venta.id}>
               <tr>
-                <td><button type="button" onClick={() => alternarExpandir(venta.id)}>{ventaExpandida === venta.id ? '−' : '+'}</button></td>
-                <td>{venta.inmueble}</td><td>{venta.comprador}</td><td>{formatearFecha(venta.fecha_venta)}</td><td>{formatearMoneda(venta.precio_venta)}</td><td><span className={`status status-${venta.estado}`}>{venta.estado}</span></td>
-                <td><AccionesTabla onEditar={() => editarVenta(venta)} onEliminar={() => eliminarVenta(venta)} /></td>
+                <td data-label="Detalle"><button type="button" onClick={() => alternarExpandir(venta.id)}>{ventaExpandida === venta.id ? '−' : '+'}</button></td>
+                <td data-label="Inmueble">{venta.inmueble}</td><td data-label="Comprador">{venta.comprador}</td><td data-label="Fecha">{formatearFecha(venta.fecha_venta)}</td><td data-label="Precio">{formatearMoneda(venta.precio_venta)}</td><td data-label="Estado"><span className={`status status-${venta.estado}`}>{venta.estado}</span></td>
+                <td data-label="Acciones"><AccionesTabla onEditar={() => editarVenta(venta)} onEliminar={() => eliminarVenta(venta)} /></td>
               </tr>
               {ventaExpandida === venta.id && venta.financiamiento && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Financiamiento</strong><p>Pago inicial: {formatearMoneda(venta.financiamiento.pago_inicial)} | Capital financiado: {formatearMoneda(venta.financiamiento.capital_financiado)} | {venta.financiamiento.numero_cuotas} cuotas de {formatearMoneda(venta.financiamiento.valor_cuota)}</p>

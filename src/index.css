@@ -954,12 +954,15 @@ textarea {
     display: flex;
     overflow-x: auto;
     gap: 4px;
+    max-width: 100%;
+    padding: 4px;
     scrollbar-width: thin;
   }
 
   .app-nav button {
     flex: 0 0 auto;
-    min-height: 44px;
+    min-height: 40px;
+    padding: 8px 12px;
     white-space: nowrap;
   }
 
@@ -975,11 +978,6 @@ textarea {
   .view-badge,
   .cobros-periodo {
     align-self: flex-start;
-  }
-
-  .data-table,
-  .cobros-table {
-    min-width: 680px;
   }
 
   .modal-actions {
@@ -1050,5 +1048,116 @@ textarea {
   .modal-content {
     max-height: calc(100dvh - 1rem);
     border-radius: 10px;
+  }
+
+  .field-label {
+    overflow-wrap: anywhere;
+    line-height: 1.3;
+  }
+
+  .entity-form input[type="date"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .table-wrap,
+  .cobros-table-wrap,
+  .cobros-people-table-wrap {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .data-table,
+  .cobros-table {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .data-table thead,
+  .cobros-table thead {
+    display: none;
+  }
+
+  .data-table tbody,
+  .cobros-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .data-table tbody tr,
+  .cobros-table tbody tr {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .data-table tbody tr:hover {
+    background: var(--surface);
+  }
+
+  .data-table tbody td,
+  .cobros-table tbody td {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 38%) minmax(0, 1fr);
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 0;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .data-table tbody td::before,
+  .cobros-table tbody td::before {
+    content: attr(data-label);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .data-table tbody td[colspan],
+  .cobros-table tbody td[colspan] {
+    display: block;
+    text-align: center;
+  }
+
+  .data-table tbody td[colspan]::before,
+  .cobros-table tbody td[colspan]::before {
+    content: none;
+  }
+
+  .cobros-amount {
+    text-align: left;
+  }
+
+  .cobros-people-summary {
+    border: 0;
+    background: transparent;
+  }
+
+  .cobros-section-heading {
+    padding: 12px 0;
+  }
+
+  .detail-cell {
+    display: block !important;
+  }
+
+  .detail-cell > table {
+    display: block;
+    margin-top: 12px;
+  }
+
+  .detail-cell > table tbody tr {
+    box-shadow: none;
+    background: var(--surface-muted);
   }
 }

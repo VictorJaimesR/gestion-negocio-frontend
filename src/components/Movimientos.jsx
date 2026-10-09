@@ -48,11 +48,11 @@ function Movimientos() {
           <tbody>
             {movimientos.map((movimiento) => (
               <tr key={movimiento.id}>
-                <td>{tiposMovimiento[movimiento.tipo] || movimiento.tipo}</td>
-                <td>{movimiento.cuota || movimiento.obligacion_arriendo || movimiento.honorario || 'Sin relación'}</td>
-                <td>{formatearFecha(movimiento.fecha)}</td>
-                <td>{formatearMoneda(movimiento.valor)}</td>
-                <td>{movimiento.observaciones || '—'}</td>
+                <td data-label="Tipo">{tiposMovimiento[movimiento.tipo] || movimiento.tipo}</td>
+                <td data-label="Relacionado con">{movimiento.cuota || movimiento.obligacion_arriendo || movimiento.honorario || 'Sin relación'}</td>
+                <td data-label="Fecha">{formatearFecha(movimiento.fecha)}</td>
+                <td data-label="Valor">{formatearMoneda(movimiento.valor)}</td>
+                <td data-label="Observaciones">{movimiento.observaciones || '—'}</td>
               </tr>
             ))}
             {movimientos.length === 0 && (
