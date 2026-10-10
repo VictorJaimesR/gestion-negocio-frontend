@@ -3,6 +3,7 @@ import { AccionesTabla } from './AccionesTabla';
 import { apiFetch, leerRespuesta } from '../api';
 import { cachedGet, getCachedData, invalidateCache } from '../dataCache';
 import { Feedback } from './Feedback'
+import { Plus } from 'lucide-react'
 
 function Inmuebles() {
     const [inmuebles, setInmuebles] = useState(() => getCachedData('/inmuebles/') || []);
@@ -83,7 +84,7 @@ function Inmuebles() {
             <div className="view-heading"><div><p className="eyebrow">Inventario</p><h2>Activos</h2><p className="view-subtitle">Consulta y administra los activos disponibles del negocio.</p></div><span className="view-badge">{inmuebles.length} Activos</span></div>
             <Feedback error={error} success={success} />
 
-            {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar activo</button>}
+            {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><Plus size={18} strokeWidth={2.2} aria-hidden="true" /> Agregar activo</button>}
             {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
                 <select
                     value={tipo}

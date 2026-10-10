@@ -7,6 +7,7 @@ import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
 import { Feedback } from './Feedback'
+import { DollarSign, Plus } from 'lucide-react'
 
 const ordenEstadosPago = {
   parcialmente_pagada: 0,
@@ -115,7 +116,7 @@ function Honorarios() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión de servicios</p><h2>Honorarios</h2><p className="view-subtitle">Controla servicios profesionales y sus vencimientos.</p></div><span className="view-badge">{honorarios.length} honorarios</span></div>
       <Feedback error={error} success={success} />
-      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar honorario</button>}
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><Plus size={18} strokeWidth={2.2} aria-hidden="true" /> Agregar honorario</button>}
       {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select name="cliente" value={cliente} onChange={(e) => setCliente(e.target.value)} required>
           <option value="">Seleccione un cliente</option>
@@ -157,7 +158,7 @@ function Honorarios() {
               <td data-label="Valor">{formatearMoneda(honorario.valor_honorario)}</td>
               <td data-label="Vencimiento">{formatearFecha(honorario.fecha_vencimiento)}</td>
               <td data-label="Estado"><span className={`status status-${honorario.estado}`}>{honorario.estado}</span><ResumenAbonos movimientos={honorario.movimientos} /></td>
-              <td data-label="Acciones"><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, movimientos: honorario.movimientos, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
+              <td data-label="Acciones"><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(honorario.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_honorario', id: honorario.id, movimientos: honorario.movimientos, etiqueta: `${honorario.concepto} - ${formatearMoneda(honorario.valor_honorario)} - Vence ${formatearFecha(honorario.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago"><DollarSign size={16} strokeWidth={2} aria-hidden="true" /></button>}<AccionesTabla onEditar={() => editarHonorario(honorario)} onEliminar={() => eliminarHonorario(honorario.id)} /></div></td>
             </tr>
           ))}
         </tbody>

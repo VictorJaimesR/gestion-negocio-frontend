@@ -4,6 +4,7 @@ import { invalidateCache } from '../dataCache'
 import CampoNumero from './CampoNumero'
 import { formatearMoneda } from './formatters'
 import { Feedback } from './Feedback'
+import { X } from 'lucide-react'
 
 const etiquetasTipo = {
   pago_cuota: 'Registrar pago de cuota',
@@ -83,7 +84,7 @@ function ModalRegistrarMovimiento({
             <p className="eyebrow">Registro financiero</p>
             <h2 id="modal-movimiento-titulo">{etiquetasTipo[tipo]}</h2>
           </div>
-          <button type="button" className="modal-close" onClick={onCerrar} aria-label="Cerrar">×</button>
+          <button type="button" className="modal-close" onClick={onCerrar} aria-label="Cerrar"><X size={20} strokeWidth={2} aria-hidden="true" /></button>
         </div>
         <p className="modal-label">Qué se está pagando</p>
         <p className="modal-description">

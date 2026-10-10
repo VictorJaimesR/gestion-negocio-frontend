@@ -7,6 +7,7 @@ import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
 import { Feedback } from './Feedback'
+import { ChevronDown, ChevronRight, DollarSign, Plus } from 'lucide-react'
 
 function calcularValorCuota(precio, pagoInicial, numeroCuotas) {
   if (
@@ -183,7 +184,7 @@ function Ventas() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión comercial</p><h2>Ventas</h2><p className="view-subtitle">Administra ventas de contado y financiadas.</p></div><span className="view-badge">{ventas.length} ventas</span></div>
       <Feedback error={error} success={success} />
-      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar venta</button>}
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><Plus size={18} strokeWidth={2.2} aria-hidden="true" /> Agregar venta</button>}
       {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>
@@ -227,14 +228,14 @@ function Ventas() {
           {ordenarVentas(ventas).map((venta) => (
             <Fragment key={venta.id}>
               <tr>
-                <td data-label="Detalle"><button type="button" onClick={() => alternarExpandir(venta.id)}>{ventaExpandida === venta.id ? '−' : '+'}</button></td>
+                <td data-label="Detalle"><button type="button" onClick={() => alternarExpandir(venta.id)} aria-label={ventaExpandida === venta.id ? 'Ocultar financiamiento' : 'Mostrar financiamiento'}>{ventaExpandida === venta.id ? <ChevronDown size={17} aria-hidden="true" /> : <ChevronRight size={17} aria-hidden="true" />}</button></td>
                 <td data-label="Inmueble">{venta.inmueble}</td><td data-label="Comprador">{venta.comprador}</td><td data-label="Fecha">{formatearFecha(venta.fecha_venta)}</td><td data-label="Precio">{formatearMoneda(venta.precio_venta)}</td><td data-label="Estado"><span className={`status status-${venta.estado}`}>{venta.estado}</span></td>
                 <td data-label="Acciones"><AccionesTabla onEditar={() => editarVenta(venta)} onEliminar={() => eliminarVenta(venta)} /></td>
               </tr>
               {ventaExpandida === venta.id && venta.financiamiento && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Financiamiento</strong><p>Pago inicial: {formatearMoneda(venta.financiamiento.pago_inicial)} | Capital financiado: {formatearMoneda(venta.financiamiento.capital_financiado)} | {venta.financiamiento.numero_cuotas} cuotas de {formatearMoneda(venta.financiamiento.valor_cuota)}</p>
                   <table><thead><tr><th>Cuota #</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-                    {ordenarPorEstadoPago(venta.financiamiento.cuotas).map((cuota) => <tr key={cuota.id}><td>{cuota.numero_cuota}</td><td>{formatearFecha(cuota.fecha_vencimiento)}</td><td>{formatearMoneda(cuota.valor_cuota)}</td><td><span className={`status status-${cuota.estado}`}>{cuota.estado}</span><ResumenAbonos movimientos={cuota.movimientos} /></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(cuota.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_cuota', id: cuota.id, movimientos: cuota.movimientos, etiqueta: `Cuota #${cuota.numero_cuota} - ${formatearMoneda(cuota.valor_cuota)} - Vence ${formatearFecha(cuota.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
+                    {ordenarPorEstadoPago(venta.financiamiento.cuotas).map((cuota) => <tr key={cuota.id}><td>{cuota.numero_cuota}</td><td>{formatearFecha(cuota.fecha_vencimiento)}</td><td>{formatearMoneda(cuota.valor_cuota)}</td><td><span className={`status status-${cuota.estado}`}>{cuota.estado}</span><ResumenAbonos movimientos={cuota.movimientos} /></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(cuota.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_cuota', id: cuota.id, movimientos: cuota.movimientos, etiqueta: `Cuota #${cuota.numero_cuota} - ${formatearMoneda(cuota.valor_cuota)} - Vence ${formatearFecha(cuota.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago"><DollarSign size={16} strokeWidth={2} aria-hidden="true" /></button>}</div></td></tr>)}
                   </tbody></table>
                 </td></tr>
               )}

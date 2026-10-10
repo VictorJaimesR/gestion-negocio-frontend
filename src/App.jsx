@@ -8,6 +8,7 @@ import CuentasPorCobrar from './components/CuentasPorCobrar'
 import Ventas from './components/Ventas'
 import Movimientos from './components/Movimientos'
 import { clearCache } from './dataCache'
+import { Menu, UserRound, X } from 'lucide-react'
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null)
@@ -68,10 +69,7 @@ function App() {
             aria-expanded={menuUsuarioAbierto}
             title="Menú de usuario"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6" />
-            </svg>
+            <UserRound size={22} strokeWidth={1.8} aria-hidden="true" />
           </button>
           {menuUsuarioAbierto && (
             <div className="user-menu-dropdown">
@@ -93,7 +91,9 @@ function App() {
         aria-controls="mobile-navigation"
       >
         <span>{opcionesNavegacion.find(([id]) => id === seccionActiva)?.[1]}</span>
-        <span className="mobile-nav-chevron" aria-hidden="true">{menuMovilAbierto ? '▴' : '▾'}</span>
+        {menuMovilAbierto
+          ? <X size={20} strokeWidth={2} aria-hidden="true" />
+          : <Menu size={20} strokeWidth={2} aria-hidden="true" />}
       </button>
       {menuMovilAbierto && (
         <div id="mobile-navigation" className="mobile-nav-menu">

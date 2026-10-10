@@ -7,6 +7,7 @@ import { formatearMoneda, formatearFecha } from './formatters'
 import ModalRegistrarMovimiento from './ModalRegistrarMovimiento'
 import ResumenAbonos from './ResumenAbonos'
 import { Feedback } from './Feedback'
+import { ChevronDown, ChevronRight, DollarSign, Plus } from 'lucide-react'
 
 const ordenEstadosPago = {
   parcialmente_pagada: 0,
@@ -137,7 +138,7 @@ function Arriendos() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión inmobiliaria</p><h2>Arriendos</h2><p className="view-subtitle">Administra contratos, cánones y obligaciones.</p></div><span className="view-badge">{arriendos.length} arriendos</span></div>
       <Feedback error={error} success={success} />
-      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar arriendo</button>}
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><Plus size={18} strokeWidth={2.2} aria-hidden="true" /> Agregar arriendo</button>}
       {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>
@@ -172,13 +173,13 @@ function Arriendos() {
           {ordenarArriendos(arriendos).map((arriendo) => (
             <Fragment key={arriendo.id}>
               <tr>
-                <td data-label="Detalle"><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)}>{arriendoExpandido === arriendo.id ? '−' : '+'}</button></td>
+                <td data-label="Detalle"><button type="button" onClick={() => setArriendoExpandido(arriendoExpandido === arriendo.id ? null : arriendo.id)} aria-label={arriendoExpandido === arriendo.id ? 'Ocultar obligaciones' : 'Mostrar obligaciones'}>{arriendoExpandido === arriendo.id ? <ChevronDown size={17} aria-hidden="true" /> : <ChevronRight size={17} aria-hidden="true" />}</button></td>
                 <td data-label="Inmueble">{arriendo.inmueble}</td><td data-label="Arrendatario">{arriendo.arrendatario}</td><td data-label="Canon mensual">{formatearMoneda(arriendo.canon_mensual)}</td><td data-label="Día de pago">{arriendo.dia_pago}</td><td data-label="Estado"><span className={`status status-${arriendo.estado}`}>{arriendo.estado}</span></td>
                 <td data-label="Acciones"><AccionesTabla onEditar={() => editarArriendo(arriendo)} onEliminar={() => eliminarArriendo(arriendo)} /></td>
               </tr>
               {arriendoExpandido === arriendo.id && (
                 <tr><td colSpan="7" className="detail-cell"><strong>Obligaciones</strong><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Valor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-                  {ordenarPorEstadoPago(arriendo.obligaciones).map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span><ResumenAbonos movimientos={obligacion.movimientos} /></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(obligacion.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_arriendo', id: obligacion.id, movimientos: obligacion.movimientos, etiqueta: `Periodo ${formatearFecha(obligacion.periodo)} - ${formatearMoneda(obligacion.valor_obligacion)} - Vence ${formatearFecha(obligacion.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago">$</button>}</div></td></tr>)}
+                  {ordenarPorEstadoPago(arriendo.obligaciones).map((obligacion) => <tr key={obligacion.id}><td>{formatearFecha(obligacion.periodo)}</td><td>{formatearFecha(obligacion.fecha_vencimiento)}</td><td>{formatearMoneda(obligacion.valor_obligacion)}</td><td><span className={`status status-${obligacion.estado}`}>{obligacion.estado}</span><ResumenAbonos movimientos={obligacion.movimientos} /></td><td><div className="acciones-tabla">{['pendiente', 'parcialmente_pagada'].includes(obligacion.estado) && <button type="button" className="accion-pago" onClick={() => setMovimientoModal({tipo: 'pago_arriendo', id: obligacion.id, movimientos: obligacion.movimientos, etiqueta: `Periodo ${formatearFecha(obligacion.periodo)} - ${formatearMoneda(obligacion.valor_obligacion)} - Vence ${formatearFecha(obligacion.fecha_vencimiento)}`})} aria-label="Registrar pago" title="Registrar pago"><DollarSign size={16} strokeWidth={2} aria-hidden="true" /></button>}</div></td></tr>)}
                 </tbody></table></td></tr>
               )}
             </Fragment>

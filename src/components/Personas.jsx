@@ -3,6 +3,7 @@ import { AccionesTabla } from './AccionesTabla'
 import { apiFetch, leerRespuesta } from '../api'
 import { cachedGet, getCachedData, invalidateCache } from '../dataCache'
 import { Feedback } from './Feedback'
+import { Plus } from 'lucide-react'
 
 function Personas() {
   const [personas, setPersonas] = useState(() => getCachedData('/personas/') || [])
@@ -91,7 +92,7 @@ function eliminarPersona(id) {
       <div className="view-heading"><div><p className="eyebrow">Directorio</p><h2>Personas</h2><p className="view-subtitle">Gestiona clientes, compradores y arrendatarios.</p></div><span className="view-badge">{personas.length} personas</span></div>
       <Feedback error={error} success={success} />
 
-      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar persona</button>}
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><Plus size={18} strokeWidth={2.2} aria-hidden="true" /> Agregar persona</button>}
     {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <input 
             type="text"

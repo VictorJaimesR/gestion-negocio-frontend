@@ -133,10 +133,13 @@ textarea:focus-visible {
 .acciones-tabla {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
 .acciones-tabla button {
+  display: grid;
+  place-items: center;
   width: 30px;
   height: 30px;
   padding: 0;
@@ -348,6 +351,13 @@ textarea:focus-visible {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.8;
+}
+
+.user-menu-trigger svg,
+.modal-close svg,
+.mobile-nav-toggle svg,
+.acciones-tabla svg {
+  display: block;
 }
 
 .user-menu-dropdown {
@@ -1218,6 +1228,28 @@ textarea {
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
+  }
+
+  .data-table tbody td[data-label="Acciones"],
+  .cobros-table tbody td[data-label="Acciones"] {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #edf1f1;
+  }
+
+  .data-table tbody td[data-label="Acciones"]::before,
+  .cobros-table tbody td[data-label="Acciones"]::before {
+    justify-self: center;
+  }
+
+  .data-table tbody td[data-label="Detalle"] {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .data-table tbody td[data-label="Detalle"]::before {
+    justify-self: center;
   }
 
   .data-table tbody td[colspan],
