@@ -1244,11 +1244,58 @@ textarea {
   }
 
   .data-table tbody td[data-label="Detalle"] {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
   }
 
   .data-table tbody td[data-label="Detalle"]::before {
+    justify-self: start;
+  }
+
+  .data-table tbody td[data-label="Detalle"] button {
+    justify-self: end;
+  }
+
+  .nested-detail-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin-top: 12px;
+    background: transparent;
+  }
+
+  .nested-detail-table tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  .nested-detail-table tbody tr {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid #dce5e5;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: none;
+  }
+
+  .nested-detail-table tbody td {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 38%) minmax(0, 1fr);
+    gap: 8px;
+    padding: 4px 0;
+    border: 0;
+    text-align: left;
+  }
+
+  .nested-detail-table tbody td[data-label="Acciones"] {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #edf1f1;
+  }
+
+  .nested-detail-table tbody td[data-label="Acciones"]::before {
     justify-self: center;
   }
 
