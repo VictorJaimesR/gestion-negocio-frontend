@@ -13,11 +13,28 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null)
   const [seccionActiva, setSeccionActiva] = useState('cuentas')
   const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
+  const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
+
+  const opcionesNavegacion = [
+    ['cuentas', 'Cuentas por cobrar'],
+    ['personas', 'Clientes'],
+    ['inmuebles', 'Activos'],
+    ['ventas', 'Ventas'],
+    ['arriendos', 'Arriendos'],
+    ['honorarios', 'Honorarios'],
+    ['movimientos', 'Movimientos'],
+  ]
+
+  function cambiarSeccion(seccion) {
+    setSeccionActiva(seccion)
+    setMenuMovilAbierto(false)
+  }
 
   function cerrarSesion() {
     localStorage.removeItem('token')
     clearCache()
     setMenuUsuarioAbierto(false)
+    setMenuMovilAbierto(false)
     setSeccionActiva('cuentas')
     setToken(null)
   }
@@ -68,14 +85,37 @@ function App() {
           )}
         </div>
       </header>
+      <button
+        type="button"
+        className="mobile-nav-toggle"
+        onClick={() => setMenuMovilAbierto(!menuMovilAbierto)}
+        aria-expanded={menuMovilAbierto}
+        aria-controls="mobile-navigation"
+      >
+        <span>{opcionesNavegacion.find(([id]) => id === seccionActiva)?.[1]}</span>
+        <span className="mobile-nav-chevron" aria-hidden="true">{menuMovilAbierto ? '▴' : '▾'}</span>
+      </button>
+      {menuMovilAbierto && (
+        <div id="mobile-navigation" className="mobile-nav-menu">
+          <p className="mobile-nav-title">Navegación</p>
+          {opcionesNavegacion.map(([id, etiqueta]) => (
+            <button
+              type="button"
+              key={id}
+              className={seccionActiva === id ? 'active' : ''}
+              onClick={() => cambiarSeccion(id)}
+            >
+              {etiqueta}
+            </button>
+          ))}
+        </div>
+      )}
       <nav className="app-nav">
-      <button className={seccionActiva === 'cuentas' ? 'active' : ''} onClick={() => setSeccionActiva('cuentas')}>Cuentas por cobrar</button>
-      <button className={seccionActiva === 'personas' ? 'active' : ''} onClick={() => setSeccionActiva('personas')}>Clientes</button>
-      <button className={seccionActiva === 'inmuebles' ? 'active' : ''} onClick={() => setSeccionActiva('inmuebles')}>Activos</button>
-      <button className={seccionActiva === 'ventas' ? 'active' : ''} onClick={() => setSeccionActiva('ventas')}>Ventas</button>
-      <button className={seccionActiva === 'arriendos' ? 'active' : ''} onClick={() => setSeccionActiva('arriendos')}>Arriendos</button>
-      <button className={seccionActiva === 'honorarios' ? 'active' : ''} onClick={() => setSeccionActiva('honorarios')}>Honorarios</button>
-      <button className={seccionActiva === 'movimientos' ? 'active' : ''} onClick={() => setSeccionActiva('movimientos')}>Movimientos</button>
+        {opcionesNavegacion.map(([id, etiqueta]) => (
+          <button type="button" key={id} className={seccionActiva === id ? 'active' : ''} onClick={() => cambiarSeccion(id)}>
+            {etiqueta}
+          </button>
+        ))}
       </nav>
 
       {seccionActiva === 'personas' && <Personas />}

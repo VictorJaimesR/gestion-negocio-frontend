@@ -10,6 +10,7 @@ function Inmuebles() {
     const [descripcion, setDescripcion] = useState('');
     const [estado, setEstado] = useState('disponible');
     const [inmuebleEditando, setInmuebleEditando] = useState(null);
+    const [formularioAbierto, setFormularioAbierto] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -55,9 +56,11 @@ function Inmuebles() {
         setDescripcion('');
         setEstado('disponible');
         setInmuebleEditando(null);
+        setFormularioAbierto(false);
     }
 
     function editarInmueble(inmueble) {
+        setFormularioAbierto(true);
         setInmuebleEditando(inmueble.id);
         setTipo(inmueble.tipo);
         setDescripcion(inmueble.descripcion);
@@ -80,7 +83,8 @@ function Inmuebles() {
             <div className="view-heading"><div><p className="eyebrow">Inventario</p><h2>Activos</h2><p className="view-subtitle">Consulta y administra los activos disponibles del negocio.</p></div><span className="view-badge">{inmuebles.length} Activos</span></div>
             <Feedback error={error} success={success} />
 
-            <form className="entity-form" onSubmit={manejarEnvio}>
+            {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar activo</button>}
+            {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
                 <select
                     value={tipo}
                     onChange={(e) => setTipo(e.target.value)}
@@ -103,7 +107,7 @@ function Inmuebles() {
                 />
                 <button type="submit">{inmuebleEditando ? 'Actualizar Inmueble' : 'Agregar Activo'}</button>
                 {inmuebleEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
-            </form>
+            </form>}
             
             <div className="table-wrap"><table className="data-table">
                 <thead>

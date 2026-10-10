@@ -12,6 +12,7 @@ function Personas() {
   const [direccion, setDireccion] = useState('')
   const [email, setEmail] = useState('')
     const [personaEditando, setPersonaEditando] = useState(null)
+    const [formularioAbierto, setFormularioAbierto] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
@@ -61,9 +62,11 @@ function limpiarFormulario() {
     setDireccion('')
     setEmail('')
     setPersonaEditando(null)
+    setFormularioAbierto(false)
 }
 
 function editarPersona(persona) {
+    setFormularioAbierto(true)
     setPersonaEditando(persona.id)
     setNombre(persona.nombre)
     setCedula(persona.cedula)
@@ -88,7 +91,8 @@ function eliminarPersona(id) {
       <div className="view-heading"><div><p className="eyebrow">Directorio</p><h2>Personas</h2><p className="view-subtitle">Gestiona clientes, compradores y arrendatarios.</p></div><span className="view-badge">{personas.length} personas</span></div>
       <Feedback error={error} success={success} />
 
-    <form className="entity-form" onSubmit={manejarEnvio}>
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar persona</button>}
+    {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <input 
             type="text"
             placeholder="Nombre"
@@ -126,7 +130,7 @@ function eliminarPersona(id) {
         />
         <button type="submit">{personaEditando ? 'Actualizar Persona' : 'Guardar Persona'}</button>
         {personaEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
-      </form>
+      </form>}
 
         <div className="table-wrap"><table className="data-table">
             <thead>

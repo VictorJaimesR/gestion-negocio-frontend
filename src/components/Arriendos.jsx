@@ -45,6 +45,7 @@ function Arriendos() {
   const [dia_pago, setDiaPago] = useState('')
   const [estado, setEstado] = useState('activo')
   const [arriendoEditando, setArriendoEditando] = useState(null)
+  const [formularioAbierto, setFormularioAbierto] = useState(false)
   const [movimientoModal, setMovimientoModal] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -74,6 +75,7 @@ function Arriendos() {
     setDiaPago('')
     setEstado('activo')
     setArriendoEditando(null)
+    setFormularioAbierto(false)
   }
 
   function manejarEnvio(evento) {
@@ -105,6 +107,7 @@ function Arriendos() {
   }
 
   function editarArriendo(arriendo) {
+    setFormularioAbierto(true)
     setArriendoEditando(arriendo.id)
     setInmueble(String(arriendo.inmueble_id))
     setArrendatario(String(arriendo.arrendatario_id))
@@ -134,7 +137,8 @@ function Arriendos() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión inmobiliaria</p><h2>Arriendos</h2><p className="view-subtitle">Administra contratos, cánones y obligaciones.</p></div><span className="view-badge">{arriendos.length} arriendos</span></div>
       <Feedback error={error} success={success} />
-      <form className="entity-form" onSubmit={manejarEnvio}>
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar arriendo</button>}
+      {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>
           {inmuebles.filter((item) => item.estado === 'disponible' || String(item.id) === inmueble).map((item) => (
@@ -160,7 +164,7 @@ function Arriendos() {
         </select>
         <button type="submit">{arriendoEditando ? 'Actualizar Arriendo' : 'Agregar Arriendo'}</button>
         {arriendoEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
-      </form>
+      </form>}
 
       <div className="table-wrap"><table className="data-table">
         <thead><tr><th></th><th>Inmueble</th><th>Arrendatario</th><th>Canon Mensual</th><th>Día de Pago</th><th>Estado</th><th>Acciones</th></tr></thead>

@@ -31,6 +31,7 @@ function Honorarios() {
   const [fecha_vencimiento, setFechaVencimiento] = useState('')
   const [estado, setEstado] = useState('')
   const [honorarioEditando, setHonorarioEditando] = useState(null)
+  const [formularioAbierto, setFormularioAbierto] = useState(false)
   const [movimientoModal, setMovimientoModal] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -58,6 +59,7 @@ function Honorarios() {
     setFechaVencimiento('')
     setEstado('')
     setHonorarioEditando(null)
+    setFormularioAbierto(false)
   }
 
   function manejarEnvio(evento) {
@@ -88,6 +90,7 @@ function Honorarios() {
   }
 
   function editarHonorario(honorario) {
+    setFormularioAbierto(true)
     setHonorarioEditando(honorario.id)
     setCliente(String(honorario.cliente_id))
     setConcepto(honorario.concepto)
@@ -112,7 +115,8 @@ function Honorarios() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión de servicios</p><h2>Honorarios</h2><p className="view-subtitle">Controla servicios profesionales y sus vencimientos.</p></div><span className="view-badge">{honorarios.length} honorarios</span></div>
       <Feedback error={error} success={success} />
-      <form className="entity-form" onSubmit={manejarEnvio}>
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar honorario</button>}
+      {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select name="cliente" value={cliente} onChange={(e) => setCliente(e.target.value)} required>
           <option value="">Seleccione un cliente</option>
           {personas.map((persona) => (
@@ -137,7 +141,7 @@ function Honorarios() {
         </select>
         <button type="submit">{honorarioEditando ? 'Actualizar Honorario' : 'Agregar Honorario'}</button>
         {honorarioEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
-      </form>
+      </form>}
 
       <div className="table-wrap"><table className="data-table">
         <thead>

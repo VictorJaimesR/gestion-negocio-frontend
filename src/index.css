@@ -414,6 +414,11 @@ textarea:focus-visible {
   color: #ffffff;
 }
 
+.mobile-nav-toggle,
+.mobile-nav-menu {
+  display: none;
+}
+
 .app-view {
   color: #17202a;
 }
@@ -512,6 +517,33 @@ textarea:focus-visible {
 .entity-form button[type="button"] {
   background: #eef2f2;
   color: #52616b;
+}
+
+.add-record-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  border: 1px solid #b9d8d5;
+  border-radius: 8px;
+  background: #f5fbfa;
+  color: #287c78;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.add-record-button span {
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.add-record-button:hover,
+.add-record-button:focus-visible {
+  border-color: #287c78;
+  background: #e8f5f3;
 }
 
 .table-wrap {
@@ -950,20 +982,74 @@ textarea {
 }
 
 @media (max-width: 760px) {
-  .app-nav {
+  .mobile-nav-toggle {
     display: flex;
-    overflow-x: auto;
-    gap: 4px;
-    max-width: 100%;
-    padding: 4px;
-    scrollbar-width: thin;
+    width: 100%;
+    min-height: 46px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 10px 14px;
+    border: 1px solid #c9dedd;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #287c78;
+    cursor: pointer;
+    font-weight: 800;
+    text-align: left;
   }
 
-  .app-nav button {
-    flex: 0 0 auto;
-    min-height: 40px;
-    padding: 8px 12px;
-    white-space: nowrap;
+  .mobile-nav-toggle:focus-visible {
+    outline: 2px solid #9ed5d0;
+    outline-offset: 2px;
+  }
+
+  .mobile-nav-chevron {
+    font-size: 0.9rem;
+  }
+
+  .mobile-nav-menu {
+    position: relative;
+    z-index: 4;
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+    padding: 8px;
+    border: 1px solid #e0e6e7;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(27, 45, 54, 0.1);
+  }
+
+  .mobile-nav-title {
+    margin: 4px 8px 6px;
+    color: #71808a;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mobile-nav-menu button {
+    min-height: 42px;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #52616b;
+    cursor: pointer;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .mobile-nav-menu button:hover,
+  .mobile-nav-menu button.active {
+    background: #287c78;
+    color: #ffffff;
+  }
+
+  .app-nav {
+    display: none;
   }
 
   .entity-form {

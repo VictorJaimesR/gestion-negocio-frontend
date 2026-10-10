@@ -63,6 +63,7 @@ function Ventas() {
   const [pago_inicial, setPagoInicial] = useState('')
   const [numero_cuotas, setNumeroCuotas] = useState('')
   const [ventaEditando, setVentaEditando] = useState(null)
+  const [formularioAbierto, setFormularioAbierto] = useState(false)
   const [movimientoModal, setMovimientoModal] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -95,6 +96,7 @@ function Ventas() {
     setPagoInicial('')
     setNumeroCuotas('')
     setVentaEditando(null)
+    setFormularioAbierto(false)
   }
 
   function manejarEnvio(evento) {
@@ -142,6 +144,7 @@ function Ventas() {
   }
 
   function editarVenta(venta) {
+    setFormularioAbierto(true)
     setVentaEditando(venta.id)
     setInmueble(String(venta.inmueble_id))
     setComprador(String(venta.comprador_id))
@@ -180,7 +183,8 @@ function Ventas() {
     <section className="app-view">
       <div className="view-heading"><div><p className="eyebrow">Gestión comercial</p><h2>Ventas</h2><p className="view-subtitle">Administra ventas de contado y financiadas.</p></div><span className="view-badge">{ventas.length} ventas</span></div>
       <Feedback error={error} success={success} />
-      <form className="entity-form" onSubmit={manejarEnvio}>
+      {!formularioAbierto && <button type="button" className="add-record-button" onClick={() => setFormularioAbierto(true)}><span aria-hidden="true">+</span> Agregar venta</button>}
+      {formularioAbierto && <form className="entity-form" onSubmit={manejarEnvio}>
         <select value={inmueble} onChange={(e) => setInmueble(e.target.value)} required>
           <option value="">Seleccione un inmueble</option>
           {inmuebles.filter((item) => item.estado === 'disponible' || String(item.id) === inmueble).map((item) => (
@@ -215,7 +219,7 @@ function Ventas() {
         )}
         <button type="submit">{ventaEditando ? 'Actualizar Venta' : 'Agregar Venta'}</button>
         {ventaEditando && <button type="button" onClick={limpiarFormulario}>Cancelar</button>}
-      </form>
+      </form>}
 
       <div className="table-wrap"><table className="data-table">
         <thead><tr><th></th><th>Inmueble</th><th>Comprador</th><th>Fecha</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
