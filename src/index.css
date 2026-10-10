@@ -896,7 +896,11 @@ textarea:focus-visible {
 }
 
 @media (max-width: 480px) {
-  .cobros-summary { grid-template-columns: 1fr; }
+  .cobros-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
   .cobros-heading h2 { font-size: 1.6rem; }
 }
 
@@ -1116,11 +1120,18 @@ textarea {
 
   .cobros-card {
     min-height: 112px;
-    padding: 16px;
+    padding: 12px;
   }
 
   .cobros-card strong {
-    font-size: 1.25rem;
+    margin: 8px 0 6px;
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  .cobros-card span,
+  .cobros-card small {
+    font-size: 0.78rem;
   }
 
   .cobros-toolbar {
