@@ -14,6 +14,27 @@ function Registro({ alCompletarRegistro, alVolver }) {
     if (registrando) return
     setError('')
 
+    if (!username.trim()) {
+      setError('Escribe el nombre de usuario que quieres usar.')
+      return
+    }
+
+    if (!email.trim()) {
+      setError('Escribe tu correo electrónico.')
+      emailInputRef.current?.focus()
+      return
+    }
+
+    if (!password) {
+      setError('Crea una contraseña para tu cuenta.')
+      return
+    }
+
+    if (!passwordConfirmation) {
+      setError('Confirma tu contraseña.')
+      return
+    }
+
     if (emailInputRef.current && !emailInputRef.current.validity.valid) {
       setError('Escribe un correo válido, por ejemplo nombre@dominio.com.')
       emailInputRef.current.focus()
