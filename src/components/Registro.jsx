@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 function Registro({ alCompletarRegistro, alVolver }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
+  const emailInputRef = useRef(null)
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [error, setError] = useState('')
@@ -12,6 +13,12 @@ function Registro({ alCompletarRegistro, alVolver }) {
     evento.preventDefault()
     if (registrando) return
     setError('')
+
+    if (emailInputRef.current && !emailInputRef.current.validity.valid) {
+      setError('Escribe un correo válido, por ejemplo nombre@dominio.com.')
+      emailInputRef.current.focus()
+      return
+    }
 
     if (password !== passwordConfirmation) {
       setError('Las contraseñas no coinciden.')
@@ -61,7 +68,7 @@ function Registro({ alCompletarRegistro, alVolver }) {
           <h2>Crear cuenta</h2>
           <p>Registra tu usuario para comenzar a administrar tu negocio.</p>
         </div>
-        <form className="login-form" onSubmit={manejarEnvio}>
+        <form className="login-form" noValidate onSubmit={manejarEnvio}>
           <label>
             Usuario
             <input
@@ -76,6 +83,7 @@ function Registro({ alCompletarRegistro, alVolver }) {
           <label>
             Correo electrónico
             <input
+              ref={emailInputRef}
               type="email"
               autoComplete="email"
               placeholder="nombre@correo.com"
