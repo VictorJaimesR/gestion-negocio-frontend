@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-function Login({ alIniciarSesion }) {
+function Login({ alIniciarSesion, alIrARegistro }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -54,6 +54,7 @@ function Login({ alIniciarSesion }) {
             Usuario
             <input
               type="text"
+              autoComplete="username"
               placeholder="Escribe tu usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -64,6 +65,7 @@ function Login({ alIniciarSesion }) {
             Contraseña
             <input
               type="password"
+              autoComplete="current-password"
               placeholder="Escribe tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -75,6 +77,10 @@ function Login({ alIniciarSesion }) {
           </button>
         </form>
         {error && <p className="login-error" role="alert">{error}</p>}
+        <p className="register-switch">
+          ¿Aún no tienes una cuenta?{' '}
+          <button type="button" onClick={alIrARegistro}>Regístrate</button>
+        </p>
         <p className="login-footer">Acceso seguro para tu equipo</p>
       </section>
     </main>
