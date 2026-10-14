@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Login from './components/Login'
+import Registro from './components/Registro'
 import Inmuebles from './components/Inmuebles'
 import Personas from './components/Personas'
 import Arriendos from './components/Arriendos'
@@ -12,6 +13,7 @@ import { Menu, UserRound, X } from 'lucide-react'
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null)
+  const [vistaAuth, setVistaAuth] = useState('login')
   const [seccionActiva, setSeccionActiva] = useState('cuentas')
   const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
@@ -31,26 +33,29 @@ function App() {
     setMenuMovilAbierto(false)
   }
 
+  function iniciarSesion(nuevoToken) {
+    clearCache()
+    setMenuUsuarioAbierto(false)
+    setSeccionActiva('cuentas')
+    setToken(nuevoToken)
+  }
+
   function cerrarSesion() {
     localStorage.removeItem('token')
     clearCache()
     setMenuUsuarioAbierto(false)
     setMenuMovilAbierto(false)
     setSeccionActiva('cuentas')
+    setVistaAuth('login')
     setToken(null)
   }
 
   if (!token) {
-    return (
-      <Login
-        alIniciarSesion={(nuevoToken) => {
-          clearCache()
-          setMenuUsuarioAbierto(false)
-          setSeccionActiva('cuentas')
-          setToken(nuevoToken)
-        }}
-      />
-    )
+    if (vistaAuth === 'registro') {
+      return <Registro alCompletarRegistro={iniciarSesion} alVolver={() => setVistaAuth('login')} />
+    }
+
+    return <Login alIniciarSesion={iniciarSesion} alIrARegistro={() => setVistaAuth('registro')} />
   }
 
   return (
@@ -127,7 +132,6 @@ function App() {
       {seccionActiva === 'movimientos' && <Movimientos />}
     </div>
   )
-
 }
 
 export default App
