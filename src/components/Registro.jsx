@@ -58,9 +58,16 @@ function Registro({ alCompletarRegistro, alVolver }) {
           password_confirmation: passwordConfirmation,
         }),
       })
+      const contentType = response.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        throw new Error(
+          'El servidor devolvió una página en lugar de la API. Verifica que el backend esté actualizado y que VITE_API_URL apunte a la API (por ejemplo, termine en /api).',
+        )
+      }
+
       const data = await response.json()
       if (!response.ok) {
-        const detalles = typeof data === 'object'
+        const detalles = typeof data === 'object' && data !== null
           ? Object.values(data).flat().join(' ')
           : data
         throw new Error(detalles || 'No se pudo crear la cuenta.')
