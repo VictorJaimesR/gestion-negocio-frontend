@@ -1489,3 +1489,9 @@ textarea {
     width: 100%;
   }
 }
+
+.demo-welcome-mark {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}

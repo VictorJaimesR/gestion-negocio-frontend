@@ -9,7 +9,7 @@ import CuentasPorCobrar from './components/CuentasPorCobrar'
 import Ventas from './components/Ventas'
 import Movimientos from './components/Movimientos'
 import { clearCache } from './dataCache'
-import { Clock3, Menu, Sprout, UserRound, X } from 'lucide-react'
+import { Clock3, Menu, UserRound, X } from 'lucide-react'
 
 function BienvenidaDemo({ alCerrar, alCrearUsuario, botonCerrarRef }) {
   return (
@@ -37,7 +37,7 @@ function BienvenidaDemo({ alCerrar, alCrearUsuario, botonCerrarRef }) {
         </button>
 
         <div className="demo-welcome-icon" aria-hidden="true">
-          <Sprout size={27} strokeWidth={1.8} />
+          <span className="demo-welcome-mark">GN</span>
         </div>
         <p className="demo-welcome-label">Demo de Gestión de Negocio</p>
         <h2 id="demo-welcome-title">¡Te damos la bienvenida!</h2>
